@@ -1,5 +1,77 @@
 ---
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import { timelineMilestones } from '../data/timeline';
+
+const eras = [
+  { label: '1800s', href: '#organized-cross-country-origins' },
+  { label: '1900s', href: '#early-school-programs' },
+  { label: '2000s', href: '#national-champions' },
+  { label: 'Present & Future', href: '#oral-history-future' }
+];
 ---
 
-<PlaceholderPage title="Timeline" description="A researched chronology of Delaware cross country will be developed here." />
+<BaseLayout title="Timeline" description="A developing, source-based chronology of Delaware cross country from the nineteenth century to the present.">
+  <section class="detail-header timeline-header">
+    <div class="container narrow">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Timeline' }]} />
+      <p class="eyebrow light">Chronology under development</p>
+      <h1>Timeline</h1>
+      <p class="lead">A framework for tracing Delaware cross country from its possible nineteenth-century origins to the stories still being recorded today.</p>
+      <p class="timeline-disclaimer">Every milestone below is a clearly labeled research placeholder. Dates, people, schools, results, and historical claims will be added only after source review.</p>
+    </div>
+  </section>
+
+  <nav class="era-navigation" aria-label="Timeline eras">
+    <div class="container">
+      <span>Jump to an era</span>
+      <ul>{eras.map((era) => <li><a href={era.href}>{era.label}</a></li>)}</ul>
+    </div>
+  </nav>
+
+  <section class="section timeline-section" aria-labelledby="timeline-heading">
+    <div class="container">
+      <div class="section-heading timeline-intro">
+        <div>
+          <p class="section-kicker">Research framework</p>
+          <h2 id="timeline-heading">Milestones to investigate</h2>
+        </div>
+        <p>Select a milestone to expand its research questions and source-status note.</p>
+      </div>
+
+      <ol class="timeline-list">
+        {timelineMilestones.map((milestone, index) => (
+          <li id={milestone.id} class="timeline-entry">
+            <div class="timeline-marker" aria-hidden="true"><span>{milestone.icon}</span></div>
+            <details class="timeline-card" open={index === 0}>
+              <summary>
+                <span class="timeline-date">{milestone.dateLabel}</span>
+                <span class="timeline-summary-main">
+                  <span class="timeline-category">{milestone.category}</span>
+                  <strong>{milestone.title}</strong>
+                  <span>{milestone.summary}</span>
+                </span>
+                <span class="timeline-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="timeline-card-content">
+                {milestone.placeholder && <PlaceholderBadge />}
+                <h3>Questions for research</h3>
+                <ul>{milestone.researchQuestions.map((question) => <li>{question}</li>)}</ul>
+                <p class="timeline-source-note"><strong>Source status:</strong> {milestone.sourceNote}</p>
+              </div>
+            </details>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="review-notice timeline-method-note">
+    <div class="container narrow">
+      <p class="section-kicker light">How the chronology will grow</p>
+      <h2>Evidence before certainty.</h2>
+      <p>Future entries will distinguish documented events from interpretation, cite sources, preserve uncertainty, and link to related oral histories, people, schools, trails, and archival records when those materials are ready.</p>
+    </div>
+  </section>
+</BaseLayout>
