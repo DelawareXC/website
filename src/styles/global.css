@@ -197,6 +197,8 @@ button, input, select { font: inherit; }
 .timeline-card-content ul { padding-left: 1.2rem; }
 .timeline-card-content li { margin-bottom: .45rem; font-size: .84rem; }
 .timeline-source-note { padding: .9rem 1rem; margin-top: 1.3rem; background: var(--paper); color: var(--muted); font-size: .75rem; }
+.timeline-source-link { display: inline-block; padding-bottom: .15rem; margin-top: 1rem; border-bottom: 1px solid var(--clay); color: var(--clay); font-size: .74rem; font-weight: 600; text-decoration: none; }
+.timeline-source-link:hover { color: var(--forest); border-bottom-color: var(--forest); }
 .timeline-method-note { border-top: 5px solid var(--gold); }
 .detail-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(260px, .8fr); align-items: start; gap: clamp(3rem, 8vw, 7rem); }
 .metadata-panel { padding: 1.5rem; border-top: 3px solid var(--clay); background: var(--paper); }

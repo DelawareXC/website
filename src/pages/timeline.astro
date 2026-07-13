@@ -1,14 +1,13 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import PlaceholderBadge from '../components/PlaceholderBadge.astro';
 import { timelineMilestones } from '../data/timeline';
 
 const eras = [
-  { label: '1800s', href: '#organized-cross-country-origins' },
-  { label: '1900s', href: '#early-school-programs' },
-  { label: '2000s', href: '#national-champions' },
-  { label: 'Present & Future', href: '#oral-history-future' }
+  { label: '1960s', href: '#dssaa-established-1966' },
+  { label: '1970s', href: '#boys-cross-country-championship-1970' },
+  { label: '2000s', href: '#diaa-replaces-dssaa-2002' },
+  { label: '2020s', href: '#division-structure-2020' }
 ];
 ---
 
@@ -16,10 +15,10 @@ const eras = [
   <section class="detail-header timeline-header">
     <div class="container narrow">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Timeline' }]} />
-      <p class="eyebrow light">Chronology under development</p>
+      <p class="eyebrow light">A developing chronology</p>
       <h1>Timeline</h1>
-      <p class="lead">A framework for tracing Delaware cross country from its possible nineteenth-century origins to the stories still being recorded today.</p>
-      <p class="timeline-disclaimer">Every milestone below is a clearly labeled research placeholder. Dates, people, schools, results, and historical claims will be added only after source review.</p>
+      <p class="lead">Selected milestones in the governance, championships, and preservation of Delaware cross country history.</p>
+      <p class="timeline-disclaimer">Historical entries below are based on official Delaware Interscholastic Athletic Association sources. This chronology will continue to grow as additional records are reviewed.</p>
     </div>
   </section>
 
@@ -34,10 +33,10 @@ const eras = [
     <div class="container">
       <div class="section-heading timeline-intro">
         <div>
-          <p class="section-kicker">Research framework</p>
-          <h2 id="timeline-heading">Milestones to investigate</h2>
+          <p class="section-kicker">Verified milestones</p>
+          <h2 id="timeline-heading">A developing historical record</h2>
         </div>
-        <p>Select a milestone to expand its research questions and source-status note.</p>
+        <p>Select a milestone to expand its historical context and source information.</p>
       </div>
 
       <ol class="timeline-list">
@@ -55,10 +54,13 @@ const eras = [
                 <span class="timeline-toggle" aria-hidden="true"></span>
               </summary>
               <div class="timeline-card-content">
-                {milestone.placeholder && <PlaceholderBadge />}
-                <h3>Questions for research</h3>
-                <ul>{milestone.researchQuestions.map((question) => <li>{question}</li>)}</ul>
-                <p class="timeline-source-note"><strong>Source status:</strong> {milestone.sourceNote}</p>
+                <h3>Milestone details</h3>
+                <ul>{milestone.details.map((detail) => <li>{detail}</li>)}</ul>
+                {milestone.sourceUrl && milestone.sourceLabel && (
+                  <a class="timeline-source-link" href={milestone.sourceUrl} target="_blank" rel="noreferrer">
+                    Source: {milestone.sourceLabel} <span aria-hidden="true">↗</span>
+                  </a>
+                )}
               </div>
             </details>
           </li>
@@ -71,7 +73,7 @@ const eras = [
     <div class="container narrow">
       <p class="section-kicker light">How the chronology will grow</p>
       <h2>Evidence before certainty.</h2>
-      <p>Future entries will distinguish documented events from interpretation, cite sources, preserve uncertainty, and link to related oral histories, people, schools, trails, and archival records when those materials are ready.</p>
+      <p>Additional entries will distinguish documented events from interpretation, cite sources, preserve uncertainty, and link to related oral histories, people, schools, trails, and archival records when those materials are ready.</p>
     </div>
   </section>
 </BaseLayout>

@@ -1,142 +1,110 @@
-export type TimelineCategory =
-  | 'Origins'
-  | 'Championships'
-  | 'Schools'
-  | 'People'
-  | 'National Recognition'
-  | 'Oral History';
+export type TimelineCategory = 'Governance' | 'Championships' | 'Project';
 
 export interface TimelineMilestone {
   id: string;
   dateLabel: string;
-  sortEra: string;
   title: string;
   category: TimelineCategory;
   icon: string;
   summary: string;
-  researchQuestions: string[];
-  sourceNote: string;
-  placeholder: boolean;
+  details: string[];
+  sourceLabel?: string;
+  sourceUrl?: string;
 }
+
+const stateChampionsHistoryUrl =
+  'https://education.delaware.gov/diaa/sport_championships/state_champions_history/';
+const aboutDiaaUrl = 'https://education.delaware.gov/diaa/about_diaa/';
+const crossCountryChampionshipsUrl =
+  'https://education.delaware.gov/diaa/sport_championships/fall_sports/cross_country/';
 
 export const timelineMilestones: TimelineMilestone[] = [
   {
-    id: 'organized-cross-country-origins',
-    dateLabel: 'Late 1800s',
-    sortEra: '1800s',
-    title: 'First organized cross country in Delaware',
-    category: 'Origins',
+    id: 'dssaa-established-1966',
+    dateLabel: '1966',
+    title: 'DSSAA is established',
+    category: 'Governance',
     icon: '◆',
     summary:
-      'Research placeholder for identifying the earliest documented organized cross-country activity in Delaware.',
-    researchQuestions: [
-      'Which surviving records establish the earliest organized activity?',
-      'How was the activity described at the time?',
-      'Which people, schools, clubs, or communities were involved?'
+      'The Delaware Secondary School Athletic Association is established as the statewide governing body for interscholastic athletics, replacing the Delaware Association of Secondary Administrators.',
+    details: [
+      'The Delaware Association of Secondary Administrators governed interscholastic athletics from 1947 to 1966.',
+      'DSSAA was formed as the growth of interscholastic athletics created the need for a separate governing body.'
     ],
-    sourceNote: 'No date or historical claim has been established. Primary-source research is required.',
-    placeholder: true
+    sourceLabel: 'DIAA State Champions History',
+    sourceUrl: stateChampionsHistoryUrl
   },
   {
-    id: 'early-school-programs',
-    dateLabel: 'Early 1900s',
-    sortEra: '1900s',
-    title: 'Early school and community milestones',
-    category: 'Schools',
-    icon: '▦',
-    summary:
-      'Placeholder for verified records showing how school or community participation developed during the early twentieth century.',
-    researchQuestions: [
-      'Which yearbooks, newspapers, programs, or school records survive?',
-      'When did documented teams and schedules begin to appear?',
-      'How did terminology and participation change over time?'
-    ],
-    sourceNote: 'Schools, dates, teams, and events will be added only after verification.',
-    placeholder: true
-  },
-  {
-    id: 'legendary-coaches',
-    dateLabel: 'Mid-1900s',
-    sortEra: '1900s',
-    title: 'Legendary coaches',
-    category: 'People',
-    icon: '✦',
-    summary:
-      'Research placeholder for coaches whose documented work had a lasting influence on Delaware cross country communities.',
-    researchQuestions: [
-      'What evidence supports a coach’s historical significance?',
-      'Whose perspectives should be included in the record?',
-      'Which interviews and archival sources can provide context?'
-    ],
-    sourceNote: 'No individual is named or characterized here. Selection criteria and evidence are still being developed.',
-    placeholder: true
-  },
-  {
-    id: 'diaa-championships',
-    dateLabel: 'Championship era',
-    sortEra: '1900s',
-    title: 'DIAA cross country championships',
+    id: 'boys-cross-country-championship-1970',
+    dateLabel: '1970',
+    title: 'Boys Cross Country State Championship added',
     category: 'Championships',
     icon: '◎',
     summary:
-      'Placeholder for a sourced history of DIAA cross country championships, their administration, formats, courses, and records.',
-    researchQuestions: [
-      'Which official records document the championship chronology?',
-      'How did classifications, formats, and venues change?',
-      'What rights and attribution apply to historic results?'
+      'The Delaware high school Boys Cross Country State Championship is added to the official state championship program.',
+    details: [
+      'DIAA’s championship history identifies 1970 as the year boys cross country joined the state championship program.',
+      'Boys soccer was also added to the state championship program that year.'
     ],
-    sourceNote: 'Dates, results, champions, and administrative history are intentionally omitted pending research.',
-    placeholder: true
+    sourceLabel: 'DIAA State Champions History',
+    sourceUrl: stateChampionsHistoryUrl
   },
   {
-    id: 'major-school-milestones',
-    dateLabel: 'Late 1900s',
-    sortEra: '1900s',
-    title: 'Major school milestones',
-    category: 'Schools',
+    id: 'diaa-replaces-dssaa-2002',
+    dateLabel: '2002',
+    title: 'DIAA replaces DSSAA',
+    category: 'Governance',
+    icon: '▦',
+    summary:
+      'The Delaware Interscholastic Athletic Association officially replaces DSSAA as the governing organization for Delaware interscholastic athletics.',
+    details: [
+      'DSSAA was dissolved in July 2002.',
+      'DIAA took its place with the same goals, objectives, and responsibilities.'
+    ],
+    sourceLabel: 'DIAA About',
+    sourceUrl: aboutDiaaUrl
+  },
+  {
+    id: 'division-structure-2020',
+    dateLabel: '2020',
+    title: 'Modern Division I and Division II championship structure',
+    category: 'Championships',
     icon: '▤',
     summary:
-      'Placeholder for significant, well-sourced developments in school programs, participation, courses, and team history.',
-    researchQuestions: [
-      'How should significance be defined and applied consistently?',
-      'Which school and community archives can document change?',
-      'How can the timeline represent different regions and experiences fairly?'
+      'The DIAA Cross Country Championships are organized using the modern Division I and Division II championship structure shown in the official championship results.',
+    details: [
+      'The official 2020 results are organized separately for Girls Division I, Girls Division II, Boys Division I, and Boys Division II.',
+      'This structure is preserved in DIAA’s published archive of past championship results.'
     ],
-    sourceNote: 'No school, program, achievement, or date is asserted in this sample entry.',
-    placeholder: true
+    sourceLabel: 'DIAA Cross Country Championships',
+    sourceUrl: crossCountryChampionshipsUrl
   },
   {
-    id: 'national-champions',
-    dateLabel: '2000s–Present',
-    sortEra: '2000s',
-    title: 'National champions and recognition',
-    category: 'National Recognition',
+    id: 'killens-pond-championships-2025',
+    dateLabel: '2025',
+    title: 'State Championships at Killens Pond State Park',
+    category: 'Championships',
     icon: '★',
     summary:
-      'Research placeholder for verified national-level achievements connected to Delaware cross country.',
-    researchQuestions: [
-      'Which governing bodies and competitions define the relevant records?',
-      'How should Delaware connections and cross-country disciplines be documented?',
-      'Which official results can be cited and preserved?'
+      'The DIAA Cross Country State Championships are held at Killens Pond State Park.',
+    details: [
+      'DIAA’s event information identifies Killens Pond State Park in Felton as the race location.',
+      'The championship program includes Division I and Division II races for girls and boys.'
     ],
-    sourceNote: 'No champion, competition, result, or affiliation is claimed here.',
-    placeholder: true
+    sourceLabel: 'DIAA Cross Country Championships',
+    sourceUrl: crossCountryChampionshipsUrl
   },
   {
-    id: 'oral-history-future',
-    dateLabel: 'Present & Future',
-    sortEra: 'Future',
-    title: 'Future oral history milestones',
-    category: 'Oral History',
+    id: 'archive-launch-2026',
+    dateLabel: '2026',
+    title: 'Delaware Cross Country Archive launches',
+    category: 'Project',
     icon: '◌',
     summary:
-      'Planning placeholder for consented interviews, transcript publication, thematic collections, and future community history work.',
-    researchQuestions: [
-      'Which voices and experiences should the program seek to document?',
-      'What review, permission, privacy, and preservation steps are required?',
-      'How will future milestones be described without overstating progress?'
-    ],
-    sourceNote: 'These are prospective project goals, not completed interviews or announced commitments.',
-    placeholder: true
+      'The Delaware Cross Country Archive project is launched to preserve the history, memories, places, and people of Delaware cross country through oral history, digital archives, maps, and historical research.',
+    details: [
+      'The project begins as a long-term digital humanities and community history initiative.',
+      'Its developing framework brings together oral histories, archival records, trail documentation, mapping, photographs, and community participation.'
+    ]
   }
 ];
