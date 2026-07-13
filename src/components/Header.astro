@@ -1,0 +1,29 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about/', label: 'About' },
+  { href: '/oral-histories/', label: 'Oral Histories' },
+  { href: '/trails-maps/', label: 'Trails & Maps' },
+  { href: '/archive/', label: 'Archive' },
+  { href: '/get-involved/', label: 'Get Involved' }
+];
+---
+
+<header class="site-header">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div class="utility-bar">A community archive in active development</div>
+  <div class="nav-wrap">
+    <a class="wordmark" href="/" aria-label="Delaware Cross Country Archive home">
+      <span class="wordmark-mark" aria-hidden="true">DXC</span>
+      <span>Delaware Cross Country<br /><strong>Archive</strong></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <ul>
+        {links.map((link) => (
+          <li><a href={link.href} aria-current={path === link.href ? 'page' : undefined}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

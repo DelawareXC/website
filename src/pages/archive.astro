@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import { collections, archiveCategories } from '../data/collections';
+---
+
+<BaseLayout title="Archive" description="Browse the developing digital collections of the Delaware Cross Country Archive.">
+  <PageHeader eyebrow="The collections" title="Archive" intro="A developing catalog for photographs, race programs, results, yearbooks, newspapers, maps, artifacts, and other evidence of Delaware cross country history." />
+  <section class="section paper-section" aria-labelledby="categories-heading">
+    <div class="container">
+      <p class="section-kicker">Browse by format</p>
+      <h2 id="categories-heading">Collection categories</h2>
+      <div class="category-grid">
+        {archiveCategories.map((category, index) => <div><span>0{index + 1}</span><h3>{category}</h3><p>Records forthcoming</p></div>)}
+      </div>
+    </div>
+  </section>
+  <section class="section" aria-labelledby="catalog-heading">
+    <div class="container">
+      <div class="section-heading"><div><p class="section-kicker">Catalog</p><h2 id="catalog-heading">Search the archive</h2></div><p class="interface-note">Search and filters are interface placeholders and are not active in this beta.</p></div>
+      <div class="catalog-tools" aria-label="Archive search controls, currently inactive">
+        <label>Search records<input type="search" placeholder="Search by keyword" disabled /></label>
+        <label>Category<select disabled><option>All categories</option></select></label>
+        <label>Date range<select disabled><option>Any date</option></select></label>
+        <button type="button" disabled>Search</button>
+      </div>
+      <div class="record-grid">
+        {collections.map((item) => (
+          <article class="record-card">
+            <img src={item.image} alt={item.imageAlt} width="640" height="480" />
+            <div class="record-body">
+              <PlaceholderBadge />
+              <p class="meta">{item.category} · {item.date}</p>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+              <p class="rights-line"><strong>Rights:</strong> {item.rights}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="rights-section">
+    <div class="container narrow">
+      <p class="section-kicker light">Rights & attribution</p>
+      <h2>Materials are shared with care.</h2>
+      <p>The archive will identify creators, donors, holding institutions, rights statements, and reuse conditions whenever known. Inclusion on this site will not imply that an item is free of copyright or other restrictions. Users are responsible for evaluating permitted uses and providing appropriate credit.</p>
+      <p>If you are a rights holder or can help correct an attribution, please contact the project through the address that will be published on the Get Involved page.</p>
+    </div>
+  </section>
+</BaseLayout>

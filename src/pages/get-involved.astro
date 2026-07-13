@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const ways = [
+  { id: 'share', number: '01', title: 'Share a Memory', text: 'Tell us about a meet, a course, a team tradition, a person, or a moment that belongs in the historical record.' },
+  { id: 'interview', number: '02', title: 'Suggest an Interview', text: 'Recommend a coach, runner, alumnus, official, organizer, family member, or community voice for a future oral history.' },
+  { id: 'materials', number: '03', title: 'Contribute Materials', text: 'Help identify photographs, programs, results, clippings, maps, yearbooks, artifacts, or personal collections that may be relevant.' },
+  { id: 'volunteer', number: '04', title: 'Volunteer', text: 'Express interest in research, description, transcription, scanning, mapping, accessibility review, or community outreach.' }
+];
+---
+
+<BaseLayout title="Get Involved" description="Share memories, suggest interviews, contribute materials, or volunteer with the Delaware Cross Country Archive.">
+  <PageHeader eyebrow="A community-built record" title="Get Involved" intro="The archive will grow through the knowledge, memories, and care of people across Delaware cross country communities." />
+  <section class="section">
+    <div class="container involvement-grid">
+      {ways.map((way) => (
+        <article id={way.id}>
+          <span class="feature-number">{way.number}</span>
+          <h2>{way.title}</h2>
+          <p>{way.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class="review-section">
+    <div class="container split-intro">
+      <p class="section-kicker light">Before publication</p>
+      <div>
+        <h2>Every contribution will be reviewed.</h2>
+        <p class="large-copy">Submitting a memory or material will not guarantee publication. The project will review relevance, provenance, accuracy, rights, privacy, consent, file quality, and descriptive context before anything appears in the archive.</p>
+        <p>Contributors will receive clear information about how materials may be described, preserved, displayed, and credited before publication.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="contact">
+    <div class="container narrow contact-card">
+      <p class="section-kicker">Contact placeholder</p>
+      <h2>Ready to contribute?</h2>
+      <p>This beta does not include a live submission form. A project contact address and contribution guidance will be added here after the intake and review process is finalized.</p>
+      <p class="contact-placeholder" aria-label="Contact address forthcoming">[Project contact address forthcoming]</p>
+    </div>
+  </section>
+</BaseLayout>

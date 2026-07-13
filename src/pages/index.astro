@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import { interviews } from '../data/interviews';
+import { trails } from '../data/trails';
+import { updates } from '../data/updates';
+
+const interview = interviews[0];
+const trail = trails[0];
+const features = [
+  { number: '01', title: 'Oral Histories', text: 'First-person accounts from the people who shaped the sport.', href: '/oral-histories/' },
+  { number: '02', title: 'Trails & Maps', text: 'Courses, landscapes, and the changing geography of competition.', href: '/trails-maps/' },
+  { number: '03', title: 'Archival Collections', text: 'Photographs, programs, results, maps, and material records.', href: '/archive/' },
+  { number: '04', title: 'Community Memories', text: 'Personal recollections that add texture to the historical record.', href: '/get-involved/' }
+];
+---
+
+<BaseLayout title="Home" description="A community-centered digital archive preserving the stories, places, and history of Delaware cross country.">
+  <section class="hero">
+    <div class="hero-image" role="img" aria-label="Stylized placeholder landscape of a cross-country trail through fields and woods"></div>
+    <div class="hero-scrim"></div>
+    <div class="container hero-content">
+      <p class="eyebrow light">A living digital history project</p>
+      <h1>Delaware Cross<br />Country Archive</h1>
+      <p class="hero-tagline">Preserving the stories, places, and history of Delaware cross country.</p>
+      <div class="button-row">
+        <a class="button button-primary" href="/archive/">Explore the Archive</a>
+        <a class="button button-light" href="/get-involved/#share">Share a Memory</a>
+      </div>
+    </div>
+    <p class="image-caption">Neutral landscape illustration — documentary photography forthcoming</p>
+  </section>
+
+  <section class="section intro-section">
+    <div class="container split-intro">
+      <p class="section-kicker">The project</p>
+      <div>
+        <h2>History lives in stories, records, and the land itself.</h2>
+        <p class="large-copy">The Delaware Cross Country Archive is a long-term digital humanities and community history initiative. It brings together oral histories, archival collections, historic trails, maps, race records, photographs, and community memories.</p>
+        <p>Built carefully and collaboratively, the archive will preserve evidence, document context, and make materials easier to discover for students, researchers, runners, families, and communities.</p>
+        <a class="text-link" href="/about/">Learn how the archive works <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper-section" aria-labelledby="explore-heading">
+    <div class="container">
+      <div class="section-heading">
+        <div><p class="section-kicker">Explore the archive</p><h2 id="explore-heading">Many paths into one history</h2></div>
+        <p>Each part of the archive offers a different way to understand the people, places, and records of the sport.</p>
+      </div>
+      <div class="feature-grid">
+        {features.map((feature) => (
+          <a class="feature-card" href={feature.href}>
+            <span class="feature-number">{feature.number}</span>
+            <h3>{feature.title}</h3>
+            <p>{feature.text}</p>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="featured-heading">
+    <div class="container">
+      <p class="section-kicker">From the field notes</p>
+      <h2 id="featured-heading">Featured records</h2>
+      <div class="editorial-grid">
+        <article class="editorial-card">
+          <img src={interview.portrait} alt={interview.portraitAlt} width="720" height="520" />
+          <div class="editorial-body">
+            <PlaceholderBadge />
+            <p class="meta">Featured oral history</p>
+            <h3>{interview.name}</h3>
+            <p>{interview.summary}</p>
+            <a class="text-link" href="/oral-histories/">View oral histories <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="editorial-card">
+          <img src={trail.image} alt={trail.imageAlt} width="720" height="520" />
+          <div class="editorial-body">
+            <PlaceholderBadge />
+            <p class="meta">Featured trail</p>
+            <h3>{trail.name}</h3>
+            <p>{trail.history}</p>
+            <a class="text-link" href="/trails-maps/">Explore trails and maps <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section" aria-labelledby="stats-heading">
+    <div class="container">
+      <p class="section-kicker light">The growing archive</p>
+      <h2 id="stats-heading">A record built over time</h2>
+      <p class="placeholder-note">All figures below are clearly labeled planning placeholders, not collection totals.</p>
+      <div class="stats-grid">
+        <div><strong>00+</strong><span>Oral histories<br /><em>placeholder</em></span></div>
+        <div><strong>00+</strong><span>Digitized objects<br /><em>placeholder</em></span></div>
+        <div><strong>00</strong><span>Trails documented<br /><em>placeholder</em></span></div>
+        <div><strong>00</strong><span>Communities represented<br /><em>placeholder</em></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="latest-heading">
+    <div class="container latest-grid">
+      <div><p class="section-kicker">Field notes</p><h2 id="latest-heading">Latest additions</h2></div>
+      <div>
+        {updates.map((update) => (
+          <article class="update-row">
+            <div><PlaceholderBadge /><p class="meta">{update.date} · {update.type}</p><h3>{update.title}</h3><p>{update.summary}</p></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

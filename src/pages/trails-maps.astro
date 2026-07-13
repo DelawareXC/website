@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import { trails } from '../data/trails';
+---
+
+<BaseLayout title="Trails & Maps" description="Explore the landscapes, courses, and spatial history of Delaware cross country.">
+  <PageHeader eyebrow="Landscape as archive" title="Trails & Maps" intro="Cross country history is inseparable from place: woods, fields, hills, weather, property lines, and the routes runners remember in their bodies." />
+  <section class="section">
+    <div class="container split-intro">
+      <p class="section-kicker">Why landscape matters</p>
+      <div>
+        <h2>Every course holds layers of memory.</h2>
+        <p class="large-copy">Mapping historic courses can show how the sport changed alongside schools, parks, development, transportation, and land use. Trail records will combine field documentation, photographs, maps, archival evidence, and oral histories.</p>
+        <p>Locations and histories will be published only after review, with attention to access, safety, property, and sensitive places.</p>
+      </div>
+    </div>
+  </section>
+  <section class="map-section" aria-labelledby="map-heading">
+    <div class="container">
+      <div class="map-header"><div><p class="section-kicker light">Interactive atlas</p><h2 id="map-heading">Courses across Delaware</h2></div><PlaceholderBadge /></div>
+      <div class="map-placeholder">
+        <img src="/assets/map-placeholder.svg" alt="Placeholder map panel with abstract Delaware-inspired trail lines and location markers" width="1200" height="600" />
+        <div class="map-message"><strong>Interactive GIS map forthcoming</strong><span>This reserved area can support a future ArcGIS or open-source map embed.</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="section" aria-labelledby="trail-heading">
+    <div class="container">
+      <div class="section-heading"><div><p class="section-kicker">Course index</p><h2 id="trail-heading">Documented trails</h2></div><p>Verified course profiles will appear here as research progresses.</p></div>
+      <div class="record-grid">
+        {trails.map((trail) => (
+          <article class="record-card horizontal">
+            <img src={trail.image} alt={trail.imageAlt} width="640" height="480" />
+            <div class="record-body">
+              <PlaceholderBadge />
+              <h3>{trail.name}</h3>
+              <p class="meta">{trail.location}</p>
+              <dl>
+                <div><dt>Distance</dt><dd>{trail.distance}</dd></div>
+                <div><dt>Terrain</dt><dd>{trail.terrain}</dd></div>
+              </dl>
+              <p>{trail.history}</p>
+              <p class="small-copy">{trail.photoCount} · {trail.relatedInterviews}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import { interviews } from '../data/interviews';
+---
+
+<BaseLayout title="Oral Histories" description="First-person accounts and interview records documenting Delaware cross country.">
+  <PageHeader eyebrow="Voices of the sport" title="Oral Histories" intro="A program for recording memories, experiences, and perspectives in the words of coaches, runners, alumni, officials, and community members." />
+  <section class="section">
+    <div class="container split-intro">
+      <p class="section-kicker">About the program</p>
+      <div>
+        <h2>Listening is part of the historical method.</h2>
+        <p class="large-copy">Oral histories can preserve experiences that may never appear in race results, newspapers, or official records. Each future interview will be conducted with consent, described with care, and presented with supporting context.</p>
+        <p>The sample below demonstrates the intended record format. It does not represent a real person or completed interview.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section paper-section" aria-labelledby="interviews-heading">
+    <div class="container">
+      <div class="section-heading"><div><p class="section-kicker">Interview index</p><h2 id="interviews-heading">Browse conversations</h2></div><p class="interface-note">Filter controls are interface placeholders and are not active in this beta.</p></div>
+      <div class="filter-bar" aria-label="Interview filters, currently inactive">
+        <button type="button" aria-pressed="true" disabled>All interviews</button>
+        <button type="button" disabled>Coaches</button>
+        <button type="button" disabled>Runners</button>
+        <button type="button" disabled>Alumni</button>
+        <button type="button" disabled>Officials</button>
+      </div>
+      <div class="record-grid">
+        {interviews.map((item) => (
+          <article class="record-card">
+            <img src={item.portrait} alt={item.portraitAlt} width="640" height="480" />
+            <div class="record-body">
+              {item.placeholder && <PlaceholderBadge />}
+              <h3>{item.name}</h3>
+              <dl>
+                <div><dt>Role</dt><dd>{item.role}</dd></div>
+                <div><dt>School</dt><dd>{item.school}</dd></div>
+                <div><dt>Years active</dt><dd>{item.yearsActive}</dd></div>
+              </dl>
+              <p>{item.summary}</p>
+              <div class="disabled-links" aria-label="Media links forthcoming"><span>Video forthcoming</span><span>Transcript forthcoming</span></div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
