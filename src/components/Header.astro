@@ -2,12 +2,18 @@
 const path = Astro.url.pathname;
 const links = [
   { href: '/', label: 'Home' },
-  { href: '/about/', label: 'About' },
+  { href: '/collections/', label: 'Collections' },
   { href: '/oral-histories/', label: 'Oral Histories' },
-  { href: '/trails-maps/', label: 'Trails & Maps' },
+  { href: '/schools/', label: 'Schools' },
+  { href: '/trails/', label: 'Trails' },
+  { href: '/timeline/', label: 'Timeline' },
   { href: '/archive/', label: 'Archive' },
+  { href: '/people/', label: 'People' },
+  { href: '/about/', label: 'About' },
   { href: '/get-involved/', label: 'Get Involved' }
 ];
+const primaryLinks = links.slice(0, 2);
+const sectionLinks = links.slice(2);
 const isCurrent = (href: string) => href === '/' ? path === '/' : path.startsWith(href);
 ---
 
@@ -20,8 +26,13 @@ const isCurrent = (href: string) => href === '/' ? path === '/' : path.startsWit
       <span>Delaware Cross Country<br /><strong>Archive</strong></span>
     </a>
     <nav class="desktop-nav" aria-label="Primary navigation">
-      <ul>
-        {links.map((link) => (
+      <ul class="nav-primary">
+        {primaryLinks.map((link) => (
+          <li><a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a></li>
+        ))}
+      </ul>
+      <ul class="nav-sections">
+        {sectionLinks.map((link) => (
           <li><a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a></li>
         ))}
       </ul>

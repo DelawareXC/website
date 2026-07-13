@@ -1,34 +1,5 @@
 ---
-import BaseLayout from '../components/BaseLayout.astro';
-import PageHeader from '../components/PageHeader.astro';
-import { aboutSections } from '../data/about';
+import PlaceholderPage from '../components/PlaceholderPage.astro';
 ---
 
-<BaseLayout title="About" description="Mission, scope, methods, and preservation principles of the Delaware Cross Country Archive.">
-  <PageHeader title="About the project" intro="A long-term effort to document a sport through the people who lived it, the records they kept, and the landscapes they crossed." />
-  <section class="section">
-    <div class="container content-layout">
-      <aside class="side-note">
-        <p class="section-kicker">Working principles</p>
-        <p>Care before speed.<br />Context before display.<br />Access with attribution.</p>
-      </aside>
-      <div class="prose-sections">
-        {aboutSections.map((section, index) => (
-          <section>
-            <span class="section-index">{String(index + 1).padStart(2, '0')}</span>
-            <h2>{section.title}</h2>
-            <p>{section.text}</p>
-          </section>
-        ))}
-      </div>
-    </div>
-  </section>
-  <section class="section paper-section">
-    <div class="container narrow">
-      <p class="section-kicker">Repository & technology</p>
-      <h2>Built for openness and longevity</h2>
-      <p class="large-copy">The site is maintained as a static Astro website with TypeScript. Content is stored in straightforward structured data files, with no database or paid service required.</p>
-      <p>This first architecture keeps the project portable, auditable, inexpensive to host, and ready for future preservation work. Technical choices may evolve as the collection and community needs become clearer.</p>
-    </div>
-  </section>
-</BaseLayout>
+<PlaceholderPage title="About" description="Project background and guiding principles will be added here as the archive develops." />

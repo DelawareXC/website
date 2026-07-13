@@ -1,0 +1,25 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  anchorIds?: string[];
+}
+
+const { title, description, anchorIds = [] } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  {anchorIds.map((id) => <span id={id} class="anchor-target" aria-hidden="true"></span>)}
+  <section class="detail-header placeholder-page">
+    <div class="container narrow">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: title }]} />
+      <p class="eyebrow light">Delaware Cross Country Archive</p>
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+      <p class="placeholder-page-note">This section is reserved for future reviewed content.</p>
+    </div>
+  </section>
+</BaseLayout>
