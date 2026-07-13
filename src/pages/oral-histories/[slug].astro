@@ -11,60 +11,187 @@ export function getStaticPaths() {
   }));
 }
 
-interface Props {
-  interview: OralHistory;
-}
-
+interface Props { interview: OralHistory; }
 const { interview } = Astro.props;
+const relatedGroups = [
+  { title: 'Related People', items: interview.relatedPeople },
+  { title: 'Related Schools', items: interview.relatedSchools },
+  { title: 'Related Trails', items: interview.relatedTrails },
+  { title: 'Related Archive Items', items: interview.relatedArchiveItems }
+];
 ---
 
 <BaseLayout title={interview.name} description={interview.summary} image={interview.portrait}>
-  <section class="detail-header">
+  <section class="detail-header interview-hero">
     <div class="container">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Oral Histories', href: '/oral-histories/' }, { label: interview.name }]} />
-      <div class="detail-heading-grid">
-        <div>
-          <p class="eyebrow light">Oral history record</p>
+      <div class="interview-hero-grid">
+        <div class="interview-hero-copy">
+          <p class="eyebrow light">Oral history interview</p>
           {interview.placeholder && <PlaceholderBadge />}
           <h1>{interview.name}</h1>
-          <p class="lead">{interview.summary}</p>
+          <p class="lead">{interview.role} · {interview.school}</p>
+          <dl class="hero-metadata">
+            <div><dt>Years Active</dt><dd>{interview.yearsActive}</dd></div>
+            <div><dt>Interview Date</dt><dd>{interview.interviewDate}</dd></div>
+          </dl>
         </div>
-        <img src={interview.portrait} alt={interview.portraitAlt} width="640" height="480" />
+        <figure class="interview-hero-image">
+          <img src={interview.portrait} alt={interview.portraitAlt} width="760" height="620" />
+          <figcaption>Hero image placeholder — portrait, date, and credit forthcoming.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
-  <section class="section">
-    <div class="container detail-layout">
-      <div class="detail-main">
-        <p class="section-kicker">Record summary</p>
-        <h2>Interview information</h2>
-        <p>This page is a reusable template for future reviewed interviews. The present record is a structural example and does not document a real narrator.</p>
-        <div class="record-actions" aria-label="Interview media status">
-          {interview.videoUrl ? <a class="button button-dark" href={interview.videoUrl}>Watch interview</a> : <span>Video forthcoming</span>}
-          {interview.transcriptUrl ? <a class="button button-dark" href={interview.transcriptUrl}>Read transcript</a> : <span>Transcript forthcoming</span>}
-        </div>
-        <section class="related-section" aria-labelledby="related-trails-heading">
-          <h2 id="related-trails-heading">Related trails</h2>
-          <ul>{interview.relatedTrails.map((trail) => <li>{trail}</li>)}</ul>
-        </section>
-      </div>
-      <aside class="metadata-panel" aria-label="Interview metadata">
-        <dl>
-          <div><dt>Category</dt><dd>{interview.category}</dd></div>
-          <div><dt>Role</dt><dd>{interview.role}</dd></div>
-          <div><dt>School or organization</dt><dd>{interview.affiliation}</dd></div>
-          <div><dt>Years active</dt><dd>{interview.yearsActive}</dd></div>
-          <div><dt>Interview date</dt><dd>{interview.interviewDate}</dd></div>
-          <div><dt>Keywords</dt><dd>{interview.keywords.join(', ')}</dd></div>
+
+  <nav class="interview-section-nav" aria-label="Interview page sections">
+    <div class="container">
+      <a href="#biography">Biography</a><a href="#interview">Interview</a><a href="#transcript">Transcript</a>
+      <a href="#gallery">Gallery</a><a href="#related">Related Records</a><a href="#citation">Citation & Rights</a>
+    </div>
+  </nav>
+
+  <section class="section" id="biography">
+    <div class="container interview-reading-grid">
+      <div><p class="section-kicker">About the narrator</p><h2>Biography</h2></div>
+      <div>
+        <p class="large-copy">{interview.biography}</p>
+        <dl class="identity-record">
+          <div><dt>Name</dt><dd>{interview.name}</dd></div><div><dt>Role</dt><dd>{interview.role}</dd></div>
+          <div><dt>School</dt><dd>{interview.school}</dd></div><div><dt>Years Active</dt><dd>{interview.yearsActive}</dd></div>
+          <div><dt>Interview Date</dt><dd>{interview.interviewDate}</dd></div>
         </dl>
-      </aside>
+      </div>
     </div>
   </section>
-  <section class="review-notice">
-    <div class="container narrow">
-      <p class="section-kicker light">Publication standard</p>
-      <h2>Review and permission come first.</h2>
-      <p>Real interviews will appear only after narrator permission, editorial review, contextual research, transcript preparation, rights review, and accessibility checks.</p>
+
+  <section class="section paper-section" id="interview">
+    <div class="container">
+      <div class="section-heading interview-heading"><div><p class="section-kicker">Recorded conversation</p><h2>Interview Summary</h2></div><p>{interview.summary}</p></div>
+      <div class="video-placeholder" role="img" aria-label="Embedded interview video placeholder">
+        <div class="video-placeholder-inner">
+          <span class="video-play" aria-hidden="true">▶</span><strong>Embedded video placeholder</strong>
+          <p>A reviewed interview recording will appear here after publication.</p>
+          {interview.videoUrl ? <a class="button button-light" href={interview.videoUrl}>Open video</a> : <span class="media-status">Video not yet available</span>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="transcript" aria-labelledby="transcript-heading">
+    <div class="container transcript-layout">
+      <div class="transcript-intro">
+        <p class="section-kicker">Accessible text</p><h2 id="transcript-heading">Transcript</h2>
+        <p>A complete, reviewed transcript will accompany each published interview. Speaker labels and timestamps will help visitors follow and cite the conversation.</p>
+        <span class="transcript-status">Placeholder transcript</span>
+      </div>
+      <div class="transcript-excerpt" aria-label="Placeholder transcript excerpt">
+        {interview.transcript.map((entry) => (
+          <div class="transcript-row"><time>{entry.timestamp}</time><div><strong>{entry.speaker}</strong><p>{entry.text}</p></div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper-section" id="gallery" aria-labelledby="gallery-heading">
+    <div class="container">
+      <div class="section-heading interview-heading"><div><p class="section-kicker">Visual record</p><h2 id="gallery-heading">Photo Gallery</h2></div><p>Future images will include descriptive captions, dates, credits, source information, and rights statements.</p></div>
+      <div class="interview-gallery">
+        {interview.gallery.map((image, index) => (
+          <figure><div class="gallery-image-wrap"><img src={image.src} alt={image.alt} width="800" height="600" /><span>0{index + 1}</span></div><figcaption>{image.caption}</figcaption></figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="related" aria-labelledby="related-heading">
+    <div class="container">
+      <p class="section-kicker">Connected records</p><h2 id="related-heading">Explore Related Materials</h2>
+      <div class="related-record-grid">
+        {relatedGroups.map((group, index) => (
+          <section><span>0{index + 1}</span><h3>{group.title}</h3><ul>{group.items.map((item) => <li>{item}</li>)}</ul></section>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="interview-rights-section" id="citation" aria-labelledby="citation-heading">
+    <div class="container citation-grid">
+      <div>
+        <p class="section-kicker light">Using this interview</p><h2 id="citation-heading">Citation Information</h2>
+        <p class="citation-text">{interview.citation}</p><p class="citation-note">Replace the bracketed access date and confirm record details before citing a future published interview.</p>
+      </div>
+      <div class="rights-record">
+        <section><h3>Copyright</h3><p>{interview.copyright}</p></section>
+        <section><h3>Permissions</h3><p>{interview.permissions}</p></section>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .interview-hero { padding-bottom: clamp(5rem, 8vw, 7rem); }
+  .interview-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: clamp(3rem, 7vw, 7rem); }
+  .interview-hero-copy h1 { margin-top: .45em; color: var(--paper); font-size: clamp(3.2rem, 6.5vw, 6.2rem); }
+  .interview-hero-copy .lead { color: #d9ddd8; }
+  .interview-hero-image { margin: 0; }
+  .interview-hero-image img { width: 100%; aspect-ratio: 5 / 4; border: 1px solid #728077; object-fit: cover; }
+  .interview-hero-image figcaption { padding-top: .6rem; color: #b9c3bc; font-size: .68rem; }
+  .hero-metadata { display: flex; margin: 2rem 0 0; gap: 2.5rem; }
+  .hero-metadata div { padding-left: 1rem; border-left: 1px solid #748178; }
+  .hero-metadata dt { color: var(--gold); font-size: .62rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+  .hero-metadata dd { margin: .3rem 0 0; color: #e6e9e6; font-size: .82rem; }
+  .interview-section-nav { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--line); background: rgba(250,248,242,.96); backdrop-filter: blur(8px); }
+  .interview-section-nav .container { display: flex; min-height: 60px; align-items: center; gap: clamp(1rem, 3vw, 2.5rem); overflow-x: auto; }
+  .interview-section-nav a { flex: 0 0 auto; color: var(--muted); font-size: .68rem; font-weight: 600; letter-spacing: .06em; text-decoration: none; text-transform: uppercase; }
+  .interview-section-nav a:hover { color: var(--clay); }
+  #biography, #interview, #transcript, #gallery, #related, #citation { scroll-margin-top: 80px; }
+  .interview-reading-grid, .transcript-layout { display: grid; grid-template-columns: .75fr 1.7fr; align-items: start; gap: clamp(3rem, 8vw, 8rem); }
+  .identity-record { margin: 3rem 0 0; border-top: 1px solid var(--line); }
+  .identity-record div { display: grid; grid-template-columns: 145px 1fr; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+  .identity-record dt { color: var(--muted); font-size: .67rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+  .identity-record dd { margin: 0; font-size: .85rem; }
+  .interview-heading > p { max-width: 450px; }
+  .video-placeholder { display: grid; min-height: 560px; border: 1px solid #617068; background: linear-gradient(135deg, rgba(20,36,28,.93), rgba(47,68,56,.92)), url('/assets/hero-landscape.svg') center / cover; color: var(--white); place-items: center; }
+  .video-placeholder-inner { max-width: 430px; padding: 2rem; text-align: center; }
+  .video-play { display: grid; width: 72px; height: 72px; padding-left: 4px; margin: 0 auto 1.5rem; border: 1px solid #96a198; border-radius: 50%; color: var(--gold); place-items: center; }
+  .video-placeholder strong { display: block; font: 500 1.6rem/1.2 var(--serif); }
+  .video-placeholder p { color: #ced5d0; font-size: .8rem; }
+  .media-status { display: inline-block; padding: .55rem .8rem; border: 1px solid #7f8d84; color: #cbd3cd; font-size: .68rem; }
+  .transcript-intro { position: sticky; top: 90px; }
+  .transcript-status { display: inline-block; padding: .35rem .55rem; border: 1px solid #b0805e; background: #fff8ec; color: #7d3d27; font-size: .62rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .transcript-excerpt { border-top: 1px solid var(--line); }
+  .transcript-row { display: grid; grid-template-columns: 90px 1fr; padding: 1.7rem 0; border-bottom: 1px solid var(--line); gap: 1.5rem; }
+  .transcript-row time { color: var(--clay); font: 500 .78rem/1.4 var(--sans); }
+  .transcript-row strong { color: var(--forest); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; }
+  .transcript-row p { margin: .45rem 0 0; color: var(--muted); font-family: var(--serif); font-size: 1.08rem; }
+  .interview-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .interview-gallery figure { margin: 0; }
+  .gallery-image-wrap { position: relative; }
+  .gallery-image-wrap img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .gallery-image-wrap span { position: absolute; right: .7rem; bottom: .7rem; display: grid; width: 35px; height: 35px; border-radius: 50%; background: var(--forest); color: var(--gold); font-size: .62rem; place-items: center; }
+  .interview-gallery figcaption { padding-top: .7rem; color: var(--muted); font-size: .7rem; }
+  .related-record-grid { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 3rem; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .related-record-grid section { min-height: 230px; padding: 1.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .related-record-grid span { color: var(--clay); font-size: .65rem; }
+  .related-record-grid h3 { margin-top: 2.7rem; font-size: 1.25rem; }
+  .related-record-grid ul { padding: 0; color: var(--muted); font-size: .76rem; list-style: none; }
+  .interview-rights-section { padding: clamp(5rem, 9vw, 8rem) 0; background: var(--forest); color: var(--white); }
+  .citation-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(3rem, 8vw, 8rem); }
+  .citation-grid h2, .citation-grid h3 { color: var(--paper); }
+  .citation-text { padding: 1.3rem; border: 1px solid #68766d; background: rgba(255,255,255,.04); color: #e1e5e2; font-family: var(--serif); }
+  .citation-note, .rights-record p { color: #bfc9c2; font-size: .75rem; }
+  .rights-record section { padding: 1.5rem 0; border-top: 1px solid #68766d; }
+  @media (max-width: 850px) {
+    .interview-hero-grid, .interview-reading-grid, .transcript-layout, .citation-grid { grid-template-columns: 1fr; }
+    .interview-hero-image { max-width: 600px; }
+    .transcript-intro { position: static; }
+    .related-record-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .hero-metadata { flex-direction: column; gap: .8rem; }
+    .video-placeholder { min-height: 400px; }
+    .transcript-row { grid-template-columns: 1fr; gap: .4rem; }
+    .interview-gallery, .related-record-grid { grid-template-columns: 1fr; }
+  }
+</style>
