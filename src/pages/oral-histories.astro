@@ -1,5 +1,189 @@
 ---
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PlaceholderBadge from '../components/PlaceholderBadge.astro';
+import {
+  ethicsPrinciples,
+  featuredInterviewPreviews,
+  interviewCategories,
+  methodologySteps
+} from '../data/oral-history-program';
 ---
 
-<PlaceholderPage title="Oral Histories" description="Reviewed interviews and supporting transcripts will be presented here in a future phase." />
+<BaseLayout title="Oral Histories" description="Recorded personal stories preserving the history and lived experience of Delaware cross country.">
+  <PageHeader
+    eyebrow="Recorded memory"
+    title="Oral Histories"
+    intro="Personal stories preserve the history of Delaware cross country through recorded interviews with the people who ran, coached, organized, supported, and remembered the sport."
+  />
+
+  <section class="section" aria-labelledby="why-oral-history-heading">
+    <div class="container split-intro">
+      <p class="section-kicker">Why oral history matters</p>
+      <div class="oral-history-prose">
+        <h2 id="why-oral-history-heading">Memory is part of the archive.</h2>
+        <p class="large-copy">Memories often live in conversation: the shape of a course, the rhythm of a season, a coach’s advice, or the feeling at a starting line. If those experiences are not recorded, they can disappear as people, places, and communities change.</p>
+        <p>Oral testimony does something different from photographs, newspapers, programs, and official results. It can explain how an event felt, why a tradition mattered, what happened outside the frame, and how people understood their experiences at the time. Used alongside documentary evidence, interviews add depth without replacing the need for careful research.</p>
+        <p>Coaches and athletes are essential voices, but they are not the only ones. Officials, alumni, parents, families, volunteers, meet workers, photographers, and community members each see a different part of the sport. Together, their perspectives can create a fuller and more humane historical record.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper-section" aria-labelledby="program-heading">
+    <div class="container">
+      <div class="section-heading oral-section-heading">
+        <div><p class="section-kicker">Our interview program</p><h2 id="program-heading">Many voices, one shared history</h2></div>
+        <p>The program is designed to welcome different forms of knowledge and experience from across Delaware cross country communities.</p>
+      </div>
+      <div class="interview-category-grid">
+        {interviewCategories.map((category, index) => (
+          <article class="interview-category-card">
+            <div class="category-card-top"><span class="category-icon" aria-hidden="true">{category.icon}</span><span>0{index + 1}</span></div>
+            <h3>{category.title}</h3>
+            <p>{category.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section methodology-section" aria-labelledby="methodology-heading">
+    <div class="container">
+      <div class="section-heading oral-section-heading">
+        <div><p class="section-kicker">Interview methodology</p><h2 id="methodology-heading">From conversation to archive</h2></div>
+        <p>A careful interview process protects context, permissions, meaning, and the long-term usefulness of every recording.</p>
+      </div>
+      <ol class="methodology-track">
+        {methodologySteps.map((item) => (
+          <li>
+            <span class="method-step">{item.step}</span>
+            <div><h3>{item.title}</h3><p>{item.description}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="oral-ethics-section" aria-labelledby="ethics-heading">
+    <div class="container">
+      <div class="oral-ethics-intro">
+        <p class="section-kicker light">Ethics & permissions</p>
+        <h2 id="ethics-heading">Care for the story and the storyteller.</h2>
+        <p>Oral history depends on trust. The archive’s approach is intended to be clear, collaborative, and respectful from the first conversation through long-term preservation and public access.</p>
+      </div>
+      <div class="ethics-grid">
+        {ethicsPrinciples.map((principle, index) => (
+          <article><span>0{index + 1}</span><h3>{principle.title}</h3><p>{principle.description}</p></article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="featured-interviews-heading">
+    <div class="container">
+      <div class="section-heading oral-section-heading">
+        <div><p class="section-kicker">Featured interviews</p><h2 id="featured-interviews-heading">Conversations coming soon</h2></div>
+        <p>These cards demonstrate how reviewed interviews will be introduced. They do not represent real people or completed recordings.</p>
+      </div>
+      <div class="featured-interview-grid">
+        {featuredInterviewPreviews.map((interview) => (
+          <article class="featured-interview-card">
+            <div class="featured-interview-image"><img src={interview.image} alt={interview.imageAlt} width="640" height="480" /><PlaceholderBadge /></div>
+            <div class="featured-interview-body">
+              <p class="meta">Coming Soon</p>
+              <h3>{interview.title}</h3>
+              <p>{interview.description}</p>
+              <button class="button button-dark" type="button" disabled aria-describedby="interviews-coming-soon">View Interview</button>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p id="interviews-coming-soon" class="interface-note interview-status-note">Interview buttons will become available after reviewed recordings are published.</p>
+    </div>
+  </section>
+
+  <section class="nominate-section" aria-labelledby="nominate-heading">
+    <div class="container nominate-grid">
+      <div>
+        <p class="section-kicker">Help shape the record</p>
+        <h2 id="nominate-heading">Nominate an interviewee</h2>
+        <p class="large-copy">Whose memories could help future generations understand Delaware cross country?</p>
+      </div>
+      <div>
+        <p>Recommend a coach, athlete, official, alumnus, parent, volunteer, organizer, photographer, journalist, or community member whose perspective deserves thoughtful consideration.</p>
+        <a class="button button-primary" href="/get-involved/">Recommend someone</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section oral-closing">
+    <div class="container narrow">
+      <p class="section-kicker">A living record</p>
+      <p>Every race leaves more than a result. Every course holds more than a route. Every memory contributes another piece to the history of Delaware cross country—and recording those memories helps ensure that the people, places, and experiences behind the sport are not lost.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .oral-history-prose { max-width: 820px; }
+  .oral-section-heading > p { max-width: 460px; }
+  .interview-category-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #beb8ab; border-left: 1px solid #beb8ab; }
+  .interview-category-card { min-height: 285px; padding: 1.8rem; border-right: 1px solid #beb8ab; border-bottom: 1px solid #beb8ab; }
+  .category-card-top { display: flex; margin-bottom: 3.7rem; align-items: center; justify-content: space-between; color: var(--clay); font-size: .67rem; }
+  .category-icon { display: grid; width: 42px; height: 42px; border: 1px solid #a9a392; border-radius: 50%; color: var(--forest); font: 600 .68rem/1 var(--sans); place-items: center; }
+  .interview-category-card h3 { font-size: 1.4rem; }
+  .interview-category-card p { color: var(--muted); font-size: .82rem; }
+  .methodology-section { overflow: hidden; }
+  .methodology-track { position: relative; display: grid; grid-template-columns: repeat(7, 1fr); padding: 0; margin: 5rem 0 0; gap: 1rem; list-style: none; }
+  .methodology-track::before { position: absolute; left: 4%; right: 4%; top: 24px; height: 1px; background: var(--line); content: ''; }
+  .methodology-track li { position: relative; }
+  .method-step { position: relative; z-index: 1; display: grid; width: 49px; height: 49px; margin-bottom: 1.5rem; border: 1px solid #9fa697; border-radius: 50%; background: var(--cream); color: var(--clay); font-size: .67rem; font-weight: 600; place-items: center; }
+  .methodology-track h3 { font-size: 1rem; }
+  .methodology-track p { color: var(--muted); font-size: .72rem; line-height: 1.55; }
+  .oral-ethics-section { padding: clamp(5rem, 9vw, 8rem) 0; background: var(--forest); color: var(--white); }
+  .oral-ethics-intro { display: grid; grid-template-columns: 1fr 1.5fr; margin-bottom: 4rem; gap: 4rem; }
+  .oral-ethics-intro .section-kicker { grid-column: 1 / -1; margin-bottom: 0; }
+  .oral-ethics-intro h2 { color: var(--paper); }
+  .oral-ethics-intro > p:last-child { color: #d2d9d4; }
+  .ethics-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #64736a; border-left: 1px solid #64736a; }
+  .ethics-grid article { min-height: 240px; padding: 1.7rem; border-right: 1px solid #64736a; border-bottom: 1px solid #64736a; }
+  .ethics-grid span { color: var(--gold); font-size: .67rem; }
+  .ethics-grid h3 { margin-top: 2.8rem; color: var(--white); font-size: 1.3rem; }
+  .ethics-grid p { color: #cbd3cd; font-size: .78rem; }
+  .featured-interview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+  .featured-interview-card { display: flex; border: 1px solid var(--line); background: var(--white); flex-direction: column; }
+  .featured-interview-image { position: relative; }
+  .featured-interview-image img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .featured-interview-image :global(.placeholder-badge) { position: absolute; left: .8rem; bottom: .8rem; }
+  .featured-interview-body { display: flex; padding: 1.5rem; flex: 1; flex-direction: column; align-items: flex-start; }
+  .featured-interview-body p:not(.meta) { color: var(--muted); font-size: .78rem; }
+  .featured-interview-body .button { margin-top: auto; }
+  .featured-interview-body button:disabled { opacity: .55; cursor: not-allowed; }
+  .interview-status-note { margin-top: 1rem; }
+  .nominate-section { padding: clamp(5rem, 9vw, 8rem) 0; background: #e9e1d1; }
+  .nominate-grid { display: grid; grid-template-columns: 1.35fr 1fr; align-items: end; gap: clamp(3rem, 8vw, 8rem); }
+  .nominate-grid .button { margin-top: 1.2rem; }
+  .oral-closing { text-align: center; }
+  .oral-closing p:last-child { color: var(--forest); font: 400 clamp(1.55rem, 3.5vw, 2.7rem)/1.42 var(--serif); }
+
+  @media (max-width: 1000px) {
+    .methodology-track { grid-template-columns: repeat(4, 1fr); gap: 2rem 1rem; }
+    .methodology-track::before { display: none; }
+    .featured-interview-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .interview-category-grid, .ethics-grid { grid-template-columns: 1fr; }
+    .interview-category-card { min-height: 230px; }
+    .category-card-top { margin-bottom: 2rem; }
+    .methodology-track { grid-template-columns: 1fr; margin-top: 3rem; }
+    .methodology-track li { display: grid; grid-template-columns: 50px 1fr; gap: 1rem; }
+    .method-step { margin: 0; }
+    .oral-ethics-intro, .nominate-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .oral-ethics-intro .section-kicker { grid-column: auto; }
+  }
+
+  @media (max-width: 480px) {
+    .featured-interview-grid { grid-template-columns: 1fr; }
+  }
+</style>
