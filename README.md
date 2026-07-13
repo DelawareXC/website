@@ -28,12 +28,14 @@ The deployable static output is written to `dist/`.
 
 Initial records are simple TypeScript data files:
 
-- `src/data/interviews.ts`
+- `src/data/oral-histories.ts`
 - `src/data/trails.ts`
-- `src/data/collections.ts`
+- `src/data/archive-items.ts`
 - `src/data/updates.ts`
 
 Each file exports a typed array. Copy an existing item, replace placeholder values with verified information, and set `placeholder` to `false` only after editorial review. Neutral placeholder graphics are in `public/assets/`.
+
+See [CONTENT_GUIDE.md](CONTENT_GUIDE.md) for field-by-field instructions for adding interviews, trails, archive items, and project updates.
 
 ## Cloudflare Pages deployment
 
@@ -53,7 +55,7 @@ Pull requests can use Cloudflare preview deployments. Production deployments sho
 public/assets/       Neutral placeholder graphics, favicon, social image
 src/components/      Shared layout, navigation, footer, page header, labels
 src/data/            Editable typed content records
-src/pages/           Home, primary pages, and 404
+src/pages/           Home, primary pages, reusable detail routes, and 404
 src/styles/          Global visual system and responsive styles
 astro.config.mjs     Static Astro configuration
 ```

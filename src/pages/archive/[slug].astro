@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PlaceholderBadge from '../../components/PlaceholderBadge.astro';
+import { archiveItems, type ArchiveItem } from '../../data/archive-items';
+
+export function getStaticPaths() {
+  return archiveItems.map((item) => ({
+    params: { slug: item.slug },
+    props: { item }
+  }));
+}
+
+interface Props {
+  item: ArchiveItem;
+}
+
+const { item } = Astro.props;
+---
+
+<BaseLayout title={item.title} description={item.description} image={item.image}>
+  <section class="detail-header">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Archive', href: '/archive/' }, { label: item.title }]} />
+      <div class="detail-heading-grid">
+        <div>
+          <p class="eyebrow light">Archive item · {item.itemId}</p>
+          {item.placeholder && <PlaceholderBadge />}
+          <h1>{item.title}</h1>
+          <p class="lead">{item.description}</p>
+        </div>
+        <img src={item.image} alt={item.imageAlt} width="640" height="480" />
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container detail-layout">
+      <div class="detail-main">
+        <p class="section-kicker">Catalog description</p>
+        <h2>About this item</h2>
+        <p class="large-copy">{item.description}</p>
+        {item.assetUrl ? <a class="button button-dark" href={item.assetUrl}>View digital object</a> : <p class="interface-note">Digital document or image link forthcoming.</p>}
+        <section class="related-section" aria-labelledby="archive-related-heading">
+          <h2 id="archive-related-heading">Related context</h2>
+          <h3>People</h3>
+          <ul>{item.relatedPeople.map((person) => <li>{person}</li>)}</ul>
+          <h3>Places and trails</h3>
+          <ul>{item.relatedPlaces.map((place) => <li>{place}</li>)}</ul>
+        </section>
+      </div>
+      <aside class="metadata-panel" aria-label="Archive item metadata">
+        <dl>
+          <div><dt>Item ID</dt><dd>{item.itemId}</dd></div>
+          <div><dt>Category</dt><dd>{item.category}</dd></div>
+          <div><dt>Date</dt><dd>{item.date}</dd></div>
+          <div><dt>Creator</dt><dd>{item.creator}</dd></div>
+          <div><dt>School or organization</dt><dd>{item.affiliation}</dd></div>
+          <div><dt>Collection</dt><dd>{item.collection}</dd></div>
+          <div><dt>Source</dt><dd>{item.source}</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+  <section class="rights-section">
+    <div class="container narrow">
+      <p class="section-kicker light">Rights statement</p>
+      <h2>Check conditions before reuse.</h2>
+      <p>{item.rightsStatement}</p>
+      <p>Ownership and reuse terms can differ by item. A public catalog record does not by itself grant permission to reproduce, publish, distribute, or otherwise reuse its contents.</p>
+    </div>
+  </section>
+</BaseLayout>

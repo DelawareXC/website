@@ -2,7 +2,7 @@
 import BaseLayout from '../components/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PlaceholderBadge from '../components/PlaceholderBadge.astro';
-import { interviews } from '../data/interviews';
+import { oralHistories, oralHistoryCategories } from '../data/oral-histories';
 ---
 
 <BaseLayout title="Oral Histories" description="First-person accounts and interview records documenting Delaware cross country.">
@@ -21,14 +21,11 @@ import { interviews } from '../data/interviews';
     <div class="container">
       <div class="section-heading"><div><p class="section-kicker">Interview index</p><h2 id="interviews-heading">Browse conversations</h2></div><p class="interface-note">Filter controls are interface placeholders and are not active in this beta.</p></div>
       <div class="filter-bar" aria-label="Interview filters, currently inactive">
-        <button type="button" aria-pressed="true" disabled>All interviews</button>
-        <button type="button" disabled>Coaches</button>
-        <button type="button" disabled>Runners</button>
-        <button type="button" disabled>Alumni</button>
-        <button type="button" disabled>Officials</button>
+        <span class="filter-chip active">All interviews</span>
+        {oralHistoryCategories.map((category) => <span class="filter-chip">{category}</span>)}
       </div>
       <div class="record-grid">
-        {interviews.map((item) => (
+        {oralHistories.map((item) => (
           <article class="record-card">
             <img src={item.portrait} alt={item.portraitAlt} width="640" height="480" />
             <div class="record-body">
@@ -36,15 +33,24 @@ import { interviews } from '../data/interviews';
               <h3>{item.name}</h3>
               <dl>
                 <div><dt>Role</dt><dd>{item.role}</dd></div>
-                <div><dt>School</dt><dd>{item.school}</dd></div>
+                <div><dt>Affiliation</dt><dd>{item.affiliation}</dd></div>
                 <div><dt>Years active</dt><dd>{item.yearsActive}</dd></div>
+                <div><dt>Interview date</dt><dd>{item.interviewDate}</dd></div>
               </dl>
               <p>{item.summary}</p>
-              <div class="disabled-links" aria-label="Media links forthcoming"><span>Video forthcoming</span><span>Transcript forthcoming</span></div>
+              <p class="keyword-line"><strong>Keywords:</strong> {item.keywords.join(', ')}</p>
+              <a class="text-link" href={`/oral-histories/${item.slug}/`}>View interview record <span aria-hidden="true">→</span></a>
             </div>
           </article>
         ))}
       </div>
+    </div>
+  </section>
+  <section class="review-notice" aria-labelledby="oral-review-heading">
+    <div class="container narrow">
+      <p class="section-kicker light">Review and permission</p>
+      <h2 id="oral-review-heading">Interviews are published only after review.</h2>
+      <p>Future oral histories will be made public only after the project completes its permission, description, context, privacy, rights, transcript, and accessibility review.</p>
     </div>
   </section>
 </BaseLayout>

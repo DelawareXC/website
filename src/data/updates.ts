@@ -1,4 +1,5 @@
 export interface UpdateItem {
+  slug: string;
   title: string;
   date: string;
   type: string;
@@ -8,6 +9,7 @@ export interface UpdateItem {
 
 export const updates: UpdateItem[] = [
   {
+    slug: 'project-beta-launch-placeholder',
     title: 'Project beta launched',
     date: 'Launch date forthcoming',
     type: 'Project update',

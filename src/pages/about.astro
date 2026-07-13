@@ -1,14 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
-
-const sections = [
-  ['Mission', 'To preserve, describe, and share the histories of Delaware cross country through responsibly gathered evidence and community knowledge.'],
-  ['Project scope', 'The archive is designed to hold oral histories, photographs, print materials, maps, course documentation, race records, and memories connected to cross country in Delaware. Coverage will grow as verified materials become available.'],
-  ['Methodology', 'Records will be described with source information, dates, context, and uncertainty made visible. Oral histories will be conducted with informed consent. Historical claims will be supported by evidence and reviewed before publication.'],
-  ['Preservation principles', 'The project favors durable formats, meaningful metadata, redundant storage planning, accessible presentation, documented rights, and respect for donors, narrators, subjects, and communities.'],
-  ['Project status', 'This website is a first beta. Its structure is ready for research materials, but current sample records and statistics are placeholders. Public content will be added only after review.']
-];
+import { aboutSections } from '../data/about';
 ---
 
 <BaseLayout title="About" description="Mission, scope, methods, and preservation principles of the Delaware Cross Country Archive.">
@@ -20,11 +13,11 @@ const sections = [
         <p>Care before speed.<br />Context before display.<br />Access with attribution.</p>
       </aside>
       <div class="prose-sections">
-        {sections.map(([title, text], index) => (
+        {aboutSections.map((section, index) => (
           <section>
-            <span class="section-index">0{index + 1}</span>
-            <h2>{title}</h2>
-            <p>{text}</p>
+            <span class="section-index">{String(index + 1).padStart(2, '0')}</span>
+            <h2>{section.title}</h2>
+            <p>{section.text}</p>
           </section>
         ))}
       </div>
@@ -34,7 +27,7 @@ const sections = [
     <div class="container narrow">
       <p class="section-kicker">Repository & technology</p>
       <h2>Built for openness and longevity</h2>
-      <p class="large-copy">The site is maintained in a public GitHub repository and built as a static Astro website with TypeScript. Content is stored in straightforward structured data files, with no database or paid service required.</p>
+      <p class="large-copy">The site is maintained as a static Astro website with TypeScript. Content is stored in straightforward structured data files, with no database or paid service required.</p>
       <p>This first architecture keeps the project portable, auditable, inexpensive to host, and ready for future preservation work. Technical choices may evolve as the collection and community needs become clearer.</p>
     </div>
   </section>

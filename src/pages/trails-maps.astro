@@ -32,7 +32,7 @@ import { trails } from '../data/trails';
       <div class="record-grid">
         {trails.map((trail) => (
           <article class="record-card horizontal">
-            <img src={trail.image} alt={trail.imageAlt} width="640" height="480" />
+            <img src={trail.photographs[0].src} alt={trail.photographs[0].alt} width="640" height="480" />
             <div class="record-body">
               <PlaceholderBadge />
               <h3>{trail.name}</h3>
@@ -41,12 +41,20 @@ import { trails } from '../data/trails';
                 <div><dt>Distance</dt><dd>{trail.distance}</dd></div>
                 <div><dt>Terrain</dt><dd>{trail.terrain}</dd></div>
               </dl>
-              <p>{trail.history}</p>
-              <p class="small-copy">{trail.photoCount} · {trail.relatedInterviews}</p>
+              <p>{trail.historicalSignificance}</p>
+              <p class="small-copy">{trail.photographs.length} placeholder photograph · {trail.relatedInterviews.join(', ')}</p>
+              <a class="text-link" href={`/trails-maps/${trail.slug}/`}>View trail record <span aria-hidden="true">→</span></a>
             </div>
           </article>
         ))}
       </div>
+    </div>
+  </section>
+  <section class="verification-notice" aria-labelledby="route-verification-heading">
+    <div class="container narrow">
+      <p class="section-kicker">Route verification</p>
+      <h2 id="route-verification-heading">Verify routes and access independently.</h2>
+      <p>Historic and current routes may cross property with changing ownership, rules, hazards, or accessibility conditions. Map lines, distances, public access, and trail conditions must be independently verified before visiting or using a course.</p>
     </div>
   </section>
 </BaseLayout>

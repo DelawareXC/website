@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PlaceholderBadge from '../../components/PlaceholderBadge.astro';
+import { oralHistories, type OralHistory } from '../../data/oral-histories';
+
+export function getStaticPaths() {
+  return oralHistories.map((interview) => ({
+    params: { slug: interview.slug },
+    props: { interview }
+  }));
+}
+
+interface Props {
+  interview: OralHistory;
+}
+
+const { interview } = Astro.props;
+---
+
+<BaseLayout title={interview.name} description={interview.summary} image={interview.portrait}>
+  <section class="detail-header">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Oral Histories', href: '/oral-histories/' }, { label: interview.name }]} />
+      <div class="detail-heading-grid">
+        <div>
+          <p class="eyebrow light">Oral history record</p>
+          {interview.placeholder && <PlaceholderBadge />}
+          <h1>{interview.name}</h1>
+          <p class="lead">{interview.summary}</p>
+        </div>
+        <img src={interview.portrait} alt={interview.portraitAlt} width="640" height="480" />
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container detail-layout">
+      <div class="detail-main">
+        <p class="section-kicker">Record summary</p>
+        <h2>Interview information</h2>
+        <p>This page is a reusable template for future reviewed interviews. The present record is a structural example and does not document a real narrator.</p>
+        <div class="record-actions" aria-label="Interview media status">
+          {interview.videoUrl ? <a class="button button-dark" href={interview.videoUrl}>Watch interview</a> : <span>Video forthcoming</span>}
+          {interview.transcriptUrl ? <a class="button button-dark" href={interview.transcriptUrl}>Read transcript</a> : <span>Transcript forthcoming</span>}
+        </div>
+        <section class="related-section" aria-labelledby="related-trails-heading">
+          <h2 id="related-trails-heading">Related trails</h2>
+          <ul>{interview.relatedTrails.map((trail) => <li>{trail}</li>)}</ul>
+        </section>
+      </div>
+      <aside class="metadata-panel" aria-label="Interview metadata">
+        <dl>
+          <div><dt>Category</dt><dd>{interview.category}</dd></div>
+          <div><dt>Role</dt><dd>{interview.role}</dd></div>
+          <div><dt>School or organization</dt><dd>{interview.affiliation}</dd></div>
+          <div><dt>Years active</dt><dd>{interview.yearsActive}</dd></div>
+          <div><dt>Interview date</dt><dd>{interview.interviewDate}</dd></div>
+          <div><dt>Keywords</dt><dd>{interview.keywords.join(', ')}</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+  <section class="review-notice">
+    <div class="container narrow">
+      <p class="section-kicker light">Publication standard</p>
+      <h2>Review and permission come first.</h2>
+      <p>Real interviews will appear only after narrator permission, editorial review, contextual research, transcript preparation, rights review, and accessibility checks.</p>
+    </div>
+  </section>
+</BaseLayout>

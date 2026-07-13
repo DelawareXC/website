@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PlaceholderBadge from '../../components/PlaceholderBadge.astro';
+import { trails, type Trail } from '../../data/trails';
+
+export function getStaticPaths() {
+  return trails.map((trail) => ({
+    params: { slug: trail.slug },
+    props: { trail }
+  }));
+}
+
+interface Props {
+  trail: Trail;
+}
+
+const { trail } = Astro.props;
+const leadImage = trail.photographs[0];
+---
+
+<BaseLayout title={trail.name} description={trail.historicalSignificance} image={leadImage.src}>
+  <section class="detail-header">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Trails & Maps', href: '/trails-maps/' }, { label: trail.name }]} />
+      <div class="detail-heading-grid">
+        <div>
+          <p class="eyebrow light">Trail record</p>
+          {trail.placeholder && <PlaceholderBadge />}
+          <h1>{trail.name}</h1>
+          <p class="lead">{trail.location}</p>
+        </div>
+        <img src={leadImage.src} alt={leadImage.alt} width="640" height="480" />
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container detail-layout">
+      <div class="detail-main">
+        <p class="section-kicker">Course history</p>
+        <h2>Historical significance</h2>
+        <p class="large-copy">{trail.historicalSignificance}</p>
+        <section class="related-section" aria-labelledby="trail-photographs-heading">
+          <h2 id="trail-photographs-heading">Photographs</h2>
+          <div class="detail-gallery">
+            {trail.photographs.map((photo) => (
+              <figure><img src={photo.src} alt={photo.alt} width="800" height="600" /><figcaption>{photo.caption}</figcaption></figure>
+            ))}
+          </div>
+        </section>
+        <section class="related-section" aria-labelledby="trail-interviews-heading">
+          <h2 id="trail-interviews-heading">Related interviews</h2>
+          <ul>{trail.relatedInterviews.map((interview) => <li>{interview}</li>)}</ul>
+        </section>
+      </div>
+      <aside class="metadata-panel" aria-label="Trail metadata">
+        <dl>
+          <div><dt>Location</dt><dd>{trail.location}</dd></div>
+          <div><dt>Course distance</dt><dd>{trail.distance}</dd></div>
+          <div><dt>Terrain</dt><dd>{trail.terrain}</dd></div>
+          <div><dt>Map</dt><dd>{trail.mapUrl ? <a href={trail.mapUrl}>View verified map</a> : 'Map forthcoming'}</dd></div>
+          <div><dt>Access notes</dt><dd>{trail.accessNotes}</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+  <section class="verification-notice">
+    <div class="container narrow">
+      <p class="section-kicker">Safety and access</p>
+      <h2>Route information requires independent verification.</h2>
+      <p>Do not rely on this archival record for present-day navigation, permission, accessibility, trail conditions, or safety. Confirm all information with the relevant landowner or site authority.</p>
+    </div>
+  </section>
+</BaseLayout>
