@@ -85,6 +85,13 @@ import {
         <div><p class="section-kicker">Featured interviews</p><h2 id="featured-interviews-heading">Conversations coming soon</h2></div>
         <p>These cards demonstrate how reviewed interviews will be introduced. They do not represent real people or completed recordings.</p>
       </div>
+      <div class="demo-interview-link" aria-label="Demonstration interview">
+        <div>
+          <p class="meta">Demonstration interview only</p>
+          <p>Preview the complete interview page format using fictional placeholder content.</p>
+        </div>
+        <a class="button button-primary" href="/oral-histories/demo-interview-john-doe/">View Demo Interview</a>
+      </div>
       <div class="featured-interview-grid">
         {featuredInterviewPreviews.map((interview) => (
           <article class="featured-interview-card">
@@ -151,6 +158,10 @@ import {
   .ethics-grid h3 { margin-top: 2.8rem; color: var(--white); font-size: 1.3rem; }
   .ethics-grid p { color: #cbd3cd; font-size: .78rem; }
   .featured-interview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+  .demo-interview-link { display: flex; padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--line); background: #e9e1d1; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .demo-interview-link p { margin: 0; }
+  .demo-interview-link p:last-child { color: var(--muted); font-size: .8rem; }
+  .demo-interview-link .button { flex: 0 0 auto; }
   .featured-interview-card { display: flex; border: 1px solid var(--line); background: var(--white); flex-direction: column; }
   .featured-interview-image { position: relative; }
   .featured-interview-image img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
@@ -181,6 +192,7 @@ import {
     .method-step { margin: 0; }
     .oral-ethics-intro, .nominate-grid { grid-template-columns: 1fr; gap: 1.5rem; }
     .oral-ethics-intro .section-kicker { grid-column: auto; }
+    .demo-interview-link { align-items: flex-start; flex-direction: column; }
   }
 
   @media (max-width: 480px) {

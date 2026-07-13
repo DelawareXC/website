@@ -41,6 +41,62 @@ export const oralHistoryCategories: OralHistoryCategory[] = [
 
 export const oralHistories: OralHistory[] = [
   {
+    slug: 'demo-interview-john-doe',
+    name: 'John Doe',
+    placeholder: true,
+    category: 'Coaches',
+    portrait: '/assets/portrait-placeholder.svg',
+    portraitAlt: 'Demonstration portrait placeholder for the fictional John Doe interview record',
+    role: 'Coach — demonstration role only',
+    school: 'Delaware High School — demonstration school only',
+    yearsActive: '1988–2004 — demonstration dates only',
+    interviewDate: 'Demonstration interview — no real interview date',
+    biography:
+      'Demonstration interview only. John Doe is a fictional placeholder used to show how a future narrator biography will appear. This text does not describe a real person, school affiliation, coaching career, or historical event.',
+    summary:
+      'Demonstration interview only. This fictional record previews the structure and presentation planned for future reviewed oral histories. No interview was conducted, and none of the information on this page should be treated as historical evidence.',
+    transcript: [
+      {
+        timestamp: '00:00:00',
+        speaker: 'John Doe — demonstration narrator',
+        text: '[Demonstration transcript only. A reviewed excerpt from a future real interview would appear here.]'
+      },
+      {
+        timestamp: '00:00:30',
+        speaker: 'Demonstration interviewer',
+        text: '[Demonstration question only. This is not a quotation or record of an actual conversation.]'
+      }
+    ],
+    gallery: [
+      {
+        src: '/assets/portrait-placeholder.svg',
+        alt: 'Demonstration portrait placeholder; not a photograph of a real interview participant',
+        caption: 'Demonstration image only — no real person is depicted.'
+      },
+      {
+        src: '/assets/trail-placeholder.svg',
+        alt: 'Demonstration landscape placeholder for the fictional interview record',
+        caption: 'Demonstration related-place image only — no historical location is identified.'
+      },
+      {
+        src: '/assets/archive-placeholder.svg',
+        alt: 'Demonstration archival item placeholder for the fictional interview record',
+        caption: 'Demonstration archive image only — no real collection item is represented.'
+      }
+    ],
+    relatedPeople: ['Demonstration related person — placeholder only'],
+    relatedSchools: ['Delaware High School — demonstration school only'],
+    relatedTrails: ['Demonstration related trail — placeholder only'],
+    relatedArchiveItems: ['Demonstration archive item — placeholder only'],
+    keywords: ['demonstration interview', 'placeholder', 'oral history template'],
+    citation:
+      '“John Doe — Demonstration Interview,” Delaware Cross Country Archive, fictional demonstration record, not a real interview, accessed [date].',
+    copyright:
+      'Demonstration statement only. This fictional record contains no real interview recording or participant-contributed materials.',
+    permissions:
+      'Demonstration statement only. No publication permission is implied because this is not a real interview or narrator record.'
+  },
+  {
     slug: 'sample-interview-record',
     name: 'Sample interview record',
     placeholder: true,
