@@ -17,7 +17,7 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
-  <!-- Elevation Profile -->
+  <!-- Leaflet Elevation -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.css"
@@ -51,6 +51,12 @@
       margin: 0;
       color: #666;
       font-size: 14px;
+    }
+
+    .mode-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #555;
     }
 
     .stats {
@@ -141,14 +147,6 @@
       line-height: 1.45;
     }
 
-    .photo-error {
-      padding: 12px;
-      background: #fff;
-      border: 1px solid #ddd;
-      font-size: 13px;
-      color: #666;
-    }
-
     @media (max-width: 700px) {
 
       .stats {
@@ -186,6 +184,13 @@
       GPS course documentation · topographic mapping · elevation · grade · field photography
     </p>
 
+    <div
+      class="mode-note"
+      id="mode-note"
+    >
+      Topo mode: elevation and grade analysis.
+    </div>
+
   </div>
 
 
@@ -217,7 +222,10 @@
   <div id="map"></div>
 
 
-  <div class="profile-section">
+  <div
+    class="profile-section"
+    id="profile-section"
+  >
 
     <h2>
       Elevation & Grade Profile
@@ -225,13 +233,15 @@
 
     <p class="profile-note">
       Distance is shown in miles and elevation in feet.
-      Very short GPS elevation fluctuations can create artificial grade spikes.
+      Grade is derived from the GPX elevation data and may contain GPS-related spikes.
     </p>
 
     <div id="elevation-profile"></div>
 
   </div>
 
+
+  <!-- Libraries -->
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -244,7 +254,7 @@
 
     /*
     ============================================================
-    BASIC FILE SETTINGS
+    FILE SETTINGS
     ============================================================
     */
 
@@ -274,7 +284,9 @@
     const street = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
-        attribution: "&copy; OpenStreetMap contributors",
+        attribution:
+          "&copy; OpenStreetMap contributors",
+
         maxZoom: 19
       }
     );
@@ -285,10 +297,15 @@
       {
         attribution:
           "Map data © OpenStreetMap contributors | Map style © OpenTopoMap",
+
         maxZoom: 17
       }
     );
 
+
+    /*
+    Default = Topo
+    */
 
     topo.addTo(map);
 
@@ -299,29 +316,30 @@
     ============================================================
     */
 
-    const photoLayer = L.layerGroup().addTo(map);
+    const photoLayer =
+      L.layerGroup();
 
 
     /*
     ============================================================
-    LAYER CONTROL
+    LAYER SWITCHER
     ============================================================
     */
 
     const baseMaps = {
-      "Topo / Contours": topo,
-      "Street Map": street
-    };
 
+      "Topo / Contours":
+        topo,
 
-    const overlays = {
-      "Field Photos": photoLayer
+      "Street Map":
+        street
+
     };
 
 
     L.control.layers(
       baseMaps,
-      overlays,
+      null,
       {
         collapsed: true
       }
@@ -330,394 +348,54 @@
 
     /*
     ============================================================
-    SCALE
+    IMPERIAL SCALE
     ============================================================
     */
 
     L.control.scale({
+
       metric: false,
+
       imperial: true
+
     }).addTo(map);
 
 
     /*
     ============================================================
-    GPX ROUTE
+    PHOTO ICON
     ============================================================
     */
 
-    const route = new L.GPX(
-      gpxFile,
-      {
-        async: true,
+    const photoIcon =
+      L.divIcon({
 
-        polyline_options: {
-          weight: 6,
-          opacity: 0.9,
-          lineCap: "round",
-          lineJoin: "round"
-        }
-      }
-    )
+        className:
+          "photo-marker",
 
-    .on(
-      "loaded",
-      function(event) {
+        html:
+          "📷",
 
-        map.fitBounds(
-          event.target.getBounds(),
-          {
-            padding: [25, 25]
-          }
-        );
+        iconSize:
+          [34, 34],
 
-      }
-    )
-
-    .addTo(map);
-
-
-    /*
-    ============================================================
-    ELEVATION PROFILE
-    ============================================================
-    */
-
-    const elevation = L.control.elevation({
-
-      theme: "lightblue-theme",
-
-      detached: true,
-
-      elevationDiv: "#elevation-profile",
-
-      followMarker: true,
-
-      autofitBounds: false,
-
-      imperial: true,
-
-      distance: true,
-
-      altitude: true,
-
-      slope: true,
-
-      speed: false,
-
-      time: false,
-
-      summary: false,
-
-      legend: true,
-
-      ruler: true,
-
-      downloadLink: false,
-
-      closeBtn: false
-
-    });
-
-
-    elevation.addTo(map);
-
-    elevation.load(gpxFile);
-
-
-    /*
-    ============================================================
-    GPX SUMMARY STATISTICS
-    ============================================================
-    */
-
-    fetch(gpxFile)
-
-      .then(response => response.text())
-
-      .then(xmlText => {
-
-        const parser = new DOMParser();
-
-        const xml = parser.parseFromString(
-          xmlText,
-          "application/xml"
-        );
-
-
-        const points = Array.from(
-          xml.getElementsByTagName("trkpt")
-        );
-
-
-        if (points.length < 2) {
-          return;
-        }
-
-
-        let totalMeters = 0;
-
-        let elevations = [];
-
-
-        function haversine(
-          lat1,
-          lon1,
-          lat2,
-          lon2
-        ) {
-
-          const R = 6371000;
-
-          const rad = Math.PI / 180;
-
-          const dLat = (lat2 - lat1) * rad;
-
-          const dLon = (lon2 - lon1) * rad;
-
-
-          const a =
-            Math.sin(dLat / 2) *
-            Math.sin(dLat / 2)
-            +
-            Math.cos(lat1 * rad) *
-            Math.cos(lat2 * rad) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
-
-
-          return R * 2 *
-            Math.atan2(
-              Math.sqrt(a),
-              Math.sqrt(1 - a)
-            );
-
-        }
-
-
-        for (
-          let i = 0;
-          i < points.length;
-          i++
-        ) {
-
-          const current = points[i];
-
-          const eleNode =
-            current.getElementsByTagName("ele")[0];
-
-
-          if (eleNode) {
-
-            elevations.push(
-              Number(eleNode.textContent)
-            );
-
-          }
-
-
-          if (i > 0) {
-
-            const previous = points[i - 1];
-
-
-            totalMeters += haversine(
-
-              Number(
-                previous.getAttribute("lat")
-              ),
-
-              Number(
-                previous.getAttribute("lon")
-              ),
-
-              Number(
-                current.getAttribute("lat")
-              ),
-
-              Number(
-                current.getAttribute("lon")
-              )
-
-            );
-
-          }
-
-        }
-
-
-        if (elevations.length === 0) {
-          return;
-        }
-
-
-        /*
-        Slight smoothing for elevation gain.
-        */
-
-        const smooth = [];
-
-
-        for (
-          let i = 0;
-          i < elevations.length;
-          i++
-        ) {
-
-          const start =
-            Math.max(0, i - 2);
-
-          const end =
-            Math.min(
-              elevations.length - 1,
-              i + 2
-            );
-
-
-          let sum = 0;
-
-          let count = 0;
-
-
-          for (
-            let j = start;
-            j <= end;
-            j++
-          ) {
-
-            sum += elevations[j];
-
-            count++;
-
-          }
-
-
-          smooth.push(
-            sum / count
-          );
-
-        }
-
-
-        let ascentMeters = 0;
-
-
-        for (
-          let i = 1;
-          i < smooth.length;
-          i++
-        ) {
-
-          const difference =
-            smooth[i] -
-            smooth[i - 1];
-
-
-          if (difference > 0.8) {
-
-            ascentMeters += difference;
-
-          }
-
-        }
-
-
-        const minMeters =
-          Math.min(...smooth);
-
-
-        const maxMeters =
-          Math.max(...smooth);
-
-
-        const miles =
-          totalMeters / 1609.344;
-
-
-        const feetPerMeter =
-          3.28084;
-
-
-        document.getElementById(
-          "distance-stat"
-        ).textContent =
-          miles.toFixed(2) + " mi";
-
-
-        document.getElementById(
-          "gain-stat"
-        ).textContent =
-          Math.round(
-            ascentMeters *
-            feetPerMeter
-          ) + " ft";
-
-
-        document.getElementById(
-          "min-stat"
-        ).textContent =
-          Math.round(
-            minMeters *
-            feetPerMeter
-          ) + " ft";
-
-
-        document.getElementById(
-          "max-stat"
-        ).textContent =
-          Math.round(
-            maxMeters *
-            feetPerMeter
-          ) + " ft";
-
-      })
-
-      .catch(error => {
-
-        console.error(
-          "Could not calculate GPX statistics:",
-          error
-        );
+        iconAnchor:
+          [17, 17]
 
       });
 
 
     /*
     ============================================================
-    CAMERA MARKER ICON
+    LOAD PHOTOS.JSON
     ============================================================
     */
 
-    const photoIcon = L.divIcon({
-
-      className: "photo-marker",
-
-      html: "📷",
-
-      iconSize: [34, 34],
-
-      iconAnchor: [17, 17]
-
-    });
-
-
-    /*
-    ============================================================
-    AUTOMATICALLY LOAD PHOTOS.JSON
-    ============================================================
-
-    THIS IS THE IMPORTANT PART.
-
-    You do NOT edit index.html anymore.
-
-    Add photos to /photos/
-
-    Add corresponding records to photos.json.
-
-    ============================================================
-    */
-
-    fetch(photoDataFile)
+    fetch(
+      photoDataFile +
+      "?v=" +
+      Date.now()
+    )
 
       .then(response => {
 
@@ -735,19 +413,32 @@
 
       .then(photoStops => {
 
+        console.log(
+          "Loaded photo records:",
+          photoStops
+        );
+
 
         photoStops.forEach(stop => {
 
 
-          /*
-          Ignore records that do not
-          have a valid latitude/longitude.
-          */
+          const lat =
+            Number(stop.lat);
+
+
+          const lon =
+            Number(stop.lon);
+
 
           if (
-            typeof stop.lat !== "number" ||
-            typeof stop.lon !== "number"
+            !Number.isFinite(lat) ||
+            !Number.isFinite(lon)
           ) {
+
+            console.warn(
+              "Invalid photo:",
+              stop
+            );
 
             return;
 
@@ -759,13 +450,13 @@
             "Field Photo";
 
 
-          const caption =
-            stop.caption ||
+          const image =
+            stop.image ||
             "";
 
 
-          const image =
-            stop.image ||
+          const caption =
+            stop.caption ||
             "";
 
 
@@ -813,10 +504,7 @@
 
 
           L.marker(
-            [
-              stop.lat,
-              stop.lon
-            ],
+            [lat, lon],
             {
               icon: photoIcon,
               title: title
@@ -830,7 +518,9 @@
             }
           )
 
-          .addTo(photoLayer);
+          .addTo(
+            photoLayer
+          );
 
         });
 
@@ -838,8 +528,8 @@
 
       .catch(error => {
 
-        console.warn(
-          "Photo markers were not loaded:",
+        console.error(
+          "Photo marker error:",
           error
         );
 
@@ -848,7 +538,606 @@
 
     /*
     ============================================================
-    CLICK MAP TO GET COORDINATES
+    GPX ROUTE
+    ============================================================
+    */
+
+    const route = new L.GPX(
+      gpxFile,
+      {
+
+        async: true,
+
+        /*
+        Disable default
+        start/end image markers
+        */
+
+        marker_options: {
+
+          startIconUrl: null,
+
+          endIconUrl: null,
+
+          shadowUrl: null
+
+        },
+
+        polyline_options: {
+
+          weight: 6,
+
+          opacity: 0.9,
+
+          lineCap: "round",
+
+          lineJoin: "round"
+
+        }
+
+      }
+    )
+
+    .on(
+      "loaded",
+      function(event) {
+
+        map.fitBounds(
+          event.target.getBounds(),
+          {
+            padding: [25, 25]
+          }
+        );
+
+      }
+    )
+
+    .addTo(map);
+
+
+    /*
+    ============================================================
+    ELEVATION + ORIGINAL SLOPE
+    ============================================================
+    */
+
+    const elevation =
+      L.control.elevation({
+
+        theme:
+          "lightblue-theme",
+
+        detached:
+          true,
+
+        elevationDiv:
+          "#elevation-profile",
+
+        followMarker:
+          true,
+
+        autofitBounds:
+          false,
+
+        /*
+        US units
+        */
+
+        imperial:
+          true,
+
+        distance:
+          true,
+
+        altitude:
+          true,
+
+        /*
+        ORIGINAL PLUGIN SLOPE
+        No custom smoothing
+        */
+
+        slope:
+          true,
+
+        speed:
+          false,
+
+        time:
+          false,
+
+        summary:
+          false,
+
+        legend:
+          true,
+
+        ruler:
+          true,
+
+        downloadLink:
+          false,
+
+        closeBtn:
+          false
+
+      });
+
+
+    elevation.addTo(map);
+
+    elevation.load(gpxFile);
+
+
+    /*
+    ============================================================
+    SUMMARY STATISTICS
+    ============================================================
+    */
+
+    fetch(
+      gpxFile +
+      "?v=" +
+      Date.now()
+    )
+
+      .then(
+        response =>
+          response.text()
+      )
+
+      .then(xmlText => {
+
+
+        const parser =
+          new DOMParser();
+
+
+        const xml =
+          parser.parseFromString(
+            xmlText,
+            "application/xml"
+          );
+
+
+        const points =
+          Array.from(
+            xml.getElementsByTagName(
+              "trkpt"
+            )
+          );
+
+
+        if (
+          points.length < 2
+        ) {
+
+          return;
+
+        }
+
+
+        let totalMeters = 0;
+
+        let elevations = [];
+
+
+        function haversine(
+          lat1,
+          lon1,
+          lat2,
+          lon2
+        ) {
+
+          const R =
+            6371000;
+
+
+          const rad =
+            Math.PI / 180;
+
+
+          const dLat =
+            (lat2 - lat1) *
+            rad;
+
+
+          const dLon =
+            (lon2 - lon1) *
+            rad;
+
+
+          const a =
+
+            Math.sin(
+              dLat / 2
+            ) ** 2
+
+            +
+
+            Math.cos(
+              lat1 * rad
+            )
+
+            *
+
+            Math.cos(
+              lat2 * rad
+            )
+
+            *
+
+            Math.sin(
+              dLon / 2
+            ) ** 2;
+
+
+          return (
+
+            R *
+
+            2 *
+
+            Math.atan2(
+              Math.sqrt(a),
+              Math.sqrt(1 - a)
+            )
+
+          );
+
+        }
+
+
+        for (
+          let i = 0;
+          i < points.length;
+          i++
+        ) {
+
+
+          const current =
+            points[i];
+
+
+          const eleNode =
+            current
+              .getElementsByTagName(
+                "ele"
+              )[0];
+
+
+          if (eleNode) {
+
+
+            const value =
+              Number(
+                eleNode.textContent
+              );
+
+
+            if (
+              Number.isFinite(
+                value
+              )
+            ) {
+
+              elevations.push(
+                value
+              );
+
+            }
+
+          }
+
+
+          if (i > 0) {
+
+
+            const previous =
+              points[i - 1];
+
+
+            const lat1 =
+              Number(
+                previous
+                  .getAttribute(
+                    "lat"
+                  )
+              );
+
+
+            const lon1 =
+              Number(
+                previous
+                  .getAttribute(
+                    "lon"
+                  )
+              );
+
+
+            const lat2 =
+              Number(
+                current
+                  .getAttribute(
+                    "lat"
+                  )
+              );
+
+
+            const lon2 =
+              Number(
+                current
+                  .getAttribute(
+                    "lon"
+                  )
+              );
+
+
+            if (
+
+              Number.isFinite(lat1) &&
+
+              Number.isFinite(lon1) &&
+
+              Number.isFinite(lat2) &&
+
+              Number.isFinite(lon2)
+
+            ) {
+
+              totalMeters +=
+                haversine(
+                  lat1,
+                  lon1,
+                  lat2,
+                  lon2
+                );
+
+            }
+
+          }
+
+        }
+
+
+        if (
+          elevations.length === 0
+        ) {
+
+          return;
+
+        }
+
+
+        const minMeters =
+          Math.min(
+            ...elevations
+          );
+
+
+        const maxMeters =
+          Math.max(
+            ...elevations
+          );
+
+
+        /*
+        Raw ascent estimate
+        from GPX elevations.
+        */
+
+        let ascentMeters = 0;
+
+
+        for (
+          let i = 1;
+          i < elevations.length;
+          i++
+        ) {
+
+
+          const difference =
+            elevations[i] -
+            elevations[i - 1];
+
+
+          if (
+            difference > 0
+          ) {
+
+            ascentMeters +=
+              difference;
+
+          }
+
+        }
+
+
+        const miles =
+          totalMeters /
+          1609.344;
+
+
+        const feetPerMeter =
+          3.28084;
+
+
+        document
+          .getElementById(
+            "distance-stat"
+          )
+          .textContent =
+
+            miles.toFixed(2) +
+            " mi";
+
+
+        document
+          .getElementById(
+            "gain-stat"
+          )
+          .textContent =
+
+            Math.round(
+              ascentMeters *
+              feetPerMeter
+            ) +
+            " ft";
+
+
+        document
+          .getElementById(
+            "min-stat"
+          )
+          .textContent =
+
+            Math.round(
+              minMeters *
+              feetPerMeter
+            ) +
+            " ft";
+
+
+        document
+          .getElementById(
+            "max-stat"
+          )
+          .textContent =
+
+            Math.round(
+              maxMeters *
+              feetPerMeter
+            ) +
+            " ft";
+
+      })
+
+      .catch(error => {
+
+        console.error(
+          "Statistics error:",
+          error
+        );
+
+      });
+
+
+    /*
+    ============================================================
+    BASE MAP MODE SWITCHING
+    ============================================================
+
+    TOPO:
+      photos hidden
+      elevation + slope visible
+
+    STREET:
+      photos visible
+      profile hidden
+
+    Leaflet fires baselayerchange
+    when user switches base layer.
+    ============================================================
+    */
+
+
+    const profileSection =
+      document.getElementById(
+        "profile-section"
+      );
+
+
+    const modeNote =
+      document.getElementById(
+        "mode-note"
+      );
+
+
+    map.on(
+      "baselayerchange",
+      function(event) {
+
+
+        /*
+        STREET MODE
+        */
+
+        if (
+          event.name ===
+          "Street Map"
+        ) {
+
+
+          if (
+            !map.hasLayer(
+              photoLayer
+            )
+          ) {
+
+            photoLayer.addTo(
+              map
+            );
+
+          }
+
+
+          profileSection
+            .style
+            .display =
+              "none";
+
+
+          modeNote
+            .textContent =
+
+              "Street mode: field photography and course location documentation.";
+
+        }
+
+
+        /*
+        TOPO MODE
+        */
+
+        if (
+          event.name ===
+          "Topo / Contours"
+        ) {
+
+
+          if (
+            map.hasLayer(
+              photoLayer
+            )
+          ) {
+
+            map.removeLayer(
+              photoLayer
+            );
+
+          }
+
+
+          profileSection
+            .style
+            .display =
+              "block";
+
+
+          modeNote
+            .textContent =
+
+              "Topo mode: elevation and grade analysis.";
+
+        }
+
+      }
+    );
+
+
+    /*
+    ============================================================
+    CLICK MAP TO GET PHOTO COORDINATES
     ============================================================
     */
 
@@ -856,11 +1145,19 @@
       "click",
       function(event) {
 
+
         const lat =
-          event.latlng.lat.toFixed(6);
+          event
+            .latlng
+            .lat
+            .toFixed(6);
+
 
         const lon =
-          event.latlng.lng.toFixed(6);
+          event
+            .latlng
+            .lng
+            .toFixed(6);
 
 
         L.popup()
