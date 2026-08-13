@@ -39,9 +39,28 @@
   <script>
     var map = L.map('map').setView([39.2, -75.5], 8);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+   var street = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors'
+  }
+);
+
+var topo = L.tileLayer(
+  'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+  {
+    attribution: 'Map data © OpenStreetMap contributors | Map style © OpenTopoMap'
+  }
+);
+
+topo.addTo(map);
+
+var baseMaps = {
+  "Topo / Contours": topo,
+  "Street Map": street
+};
+
+L.control.layers(baseMaps).addTo(map);
 
     new L.GPX('test-walk.gpx', {
       async: true
