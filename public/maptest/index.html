@@ -11,7 +11,6 @@
 
   <title>Delaware XC Interactive Course Map</title>
 
-
   <!-- Leaflet -->
   <link
     rel="stylesheet"
@@ -23,7 +22,6 @@
     rel="stylesheet"
     href="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.css"
   >
-
 
   <style>
 
@@ -55,9 +53,6 @@
       font-size: 14px;
     }
 
-
-    /* STAT CARDS */
-
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -84,16 +79,10 @@
       font-weight: bold;
     }
 
-
-    /* MAP */
-
     #map {
       width: 100%;
       height: 600px;
     }
-
-
-    /* ELEVATION */
 
     .profile-section {
       margin-top: 14px;
@@ -117,9 +106,6 @@
       min-height: 270px;
     }
 
-
-    /* PHOTO MARKERS */
-
     .photo-marker {
       background: white;
       border: 2px solid #333;
@@ -133,14 +119,15 @@
     }
 
     .photo-popup {
-      width: 260px;
+      width: 280px;
     }
 
     .photo-popup img {
       width: 100%;
       height: auto;
-      border-radius: 6px;
+      border-radius: 7px;
       margin-top: 8px;
+      display: block;
     }
 
     .photo-popup h3 {
@@ -151,9 +138,16 @@
     .photo-popup p {
       margin: 7px 0 0;
       font-size: 13px;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
+    .photo-error {
+      padding: 12px;
+      background: #fff;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      color: #666;
+    }
 
     @media (max-width: 700px) {
 
@@ -182,8 +176,6 @@
 <body>
 
 
-  <!-- TITLE -->
-
   <div class="page-header">
 
     <h1>
@@ -191,75 +183,39 @@
     </h1>
 
     <p>
-      GPS course documentation · topographic mapping · elevation · slope · field photography
+      GPS course documentation · topographic mapping · elevation · grade · field photography
     </p>
 
   </div>
 
 
-
-  <!-- CLEAN SUMMARY -->
-
   <div class="stats">
 
     <div class="stat">
-      <div class="stat-label">
-        Distance
-      </div>
-      <div
-        class="stat-value"
-        id="distance-stat">
-        —
-      </div>
+      <div class="stat-label">Distance</div>
+      <div class="stat-value" id="distance-stat">—</div>
     </div>
 
-
     <div class="stat">
-      <div class="stat-label">
-        Elevation Gain
-      </div>
-      <div
-        class="stat-value"
-        id="gain-stat">
-        —
-      </div>
+      <div class="stat-label">Elevation Gain</div>
+      <div class="stat-value" id="gain-stat">—</div>
     </div>
 
-
     <div class="stat">
-      <div class="stat-label">
-        Lowest Point
-      </div>
-      <div
-        class="stat-value"
-        id="min-stat">
-        —
-      </div>
+      <div class="stat-label">Lowest Point</div>
+      <div class="stat-value" id="min-stat">—</div>
     </div>
 
-
     <div class="stat">
-      <div class="stat-label">
-        Highest Point
-      </div>
-      <div
-        class="stat-value"
-        id="max-stat">
-        —
-      </div>
+      <div class="stat-label">Highest Point</div>
+      <div class="stat-value" id="max-stat">—</div>
     </div>
 
   </div>
 
 
-
-  <!-- MAP -->
-
   <div id="map"></div>
 
-
-
-  <!-- ELEVATION PROFILE -->
 
   <div class="profile-section">
 
@@ -277,36 +233,24 @@
   </div>
 
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- JAVASCRIPT LIBRARIES -->
+  <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
 
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-  </script>
-
-
-  <script
-    src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js">
-  </script>
-
-
-  <script
-    src="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.js">
-  </script>
-
+  <script src="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.js"></script>
 
 
   <script>
 
     /*
     ============================================================
-    BASIC SETTINGS
+    BASIC FILE SETTINGS
     ============================================================
     */
 
-
     const gpxFile = "test-walk.gpx";
 
+    const photoDataFile = "photos.json";
 
 
     /*
@@ -315,63 +259,38 @@
     ============================================================
     */
 
-
     const map = L.map("map").setView(
       [39.2, -75.5],
       8
     );
 
 
-
     /*
     ============================================================
-    BASE MAP 1 — STREET
+    BASE MAPS
     ============================================================
     */
 
-
     const street = L.tileLayer(
-
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
       {
-
-        attribution:
-          "&copy; OpenStreetMap contributors",
-
+        attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 19
-
       }
-
     );
 
 
-
-    /*
-    ============================================================
-    BASE MAP 2 — TOPOGRAPHIC / CONTOURS
-    ============================================================
-    */
-
-
     const topo = L.tileLayer(
-
       "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-
       {
-
         attribution:
           "Map data © OpenStreetMap contributors | Map style © OpenTopoMap",
-
         maxZoom: 17
-
       }
-
     );
 
 
     topo.addTo(map);
-
 
 
     /*
@@ -380,63 +299,45 @@
     ============================================================
     */
 
-
     const photoLayer = L.layerGroup().addTo(map);
-
 
 
     /*
     ============================================================
-    LAYER SWITCHER
+    LAYER CONTROL
     ============================================================
     */
 
-
     const baseMaps = {
-
       "Topo / Contours": topo,
-
       "Street Map": street
-
     };
 
 
     const overlays = {
-
       "Field Photos": photoLayer
-
     };
 
 
     L.control.layers(
-
       baseMaps,
-
       overlays,
-
       {
         collapsed: true
       }
-
     ).addTo(map);
-
 
 
     /*
     ============================================================
-    SCALE — MILES / FEET
+    SCALE
     ============================================================
     */
 
-
     L.control.scale({
-
       metric: false,
-
       imperial: true
-
     }).addTo(map);
-
 
 
     /*
@@ -445,55 +346,35 @@
     ============================================================
     */
 
-
     const route = new L.GPX(
-
       gpxFile,
-
       {
-
         async: true,
 
         polyline_options: {
-
           weight: 6,
-
           opacity: 0.9,
-
           lineCap: "round",
-
           lineJoin: "round"
-
         }
-
       }
-
     )
 
-
     .on(
-
       "loaded",
-
       function(event) {
 
         map.fitBounds(
-
           event.target.getBounds(),
-
           {
             padding: [25, 25]
           }
-
         );
 
       }
-
     )
 
-
     .addTo(map);
-
 
 
     /*
@@ -502,24 +383,17 @@
     ============================================================
     */
 
-
     const elevation = L.control.elevation({
 
       theme: "lightblue-theme",
 
       detached: true,
 
-      elevationDiv:
-        "#elevation-profile",
+      elevationDiv: "#elevation-profile",
 
       followMarker: true,
 
       autofitBounds: false,
-
-      /*
-      IMPORTANT:
-      miles + feet
-      */
 
       imperial: true,
 
@@ -527,21 +401,11 @@
 
       altitude: true,
 
-      /*
-      Show grade/slope profile
-      */
-
       slope: true,
 
       speed: false,
 
       time: false,
-
-      /*
-      We make our own cleaner
-      summary cards above,
-      so hide plugin summary.
-      */
 
       summary: false,
 
@@ -558,523 +422,445 @@
 
     elevation.addTo(map);
 
-
-    elevation.load(
-      gpxFile
-    );
-
+    elevation.load(gpxFile);
 
 
     /*
     ============================================================
-    CLEAN STATISTICS
-    ============================================================
-
-    Reads the GPX directly.
-
-    Elevation gain uses a simple smoothing threshold
-    so tiny GPS height fluctuations are not all counted
-    as real climbing.
+    GPX SUMMARY STATISTICS
     ============================================================
     */
 
-
     fetch(gpxFile)
 
-      .then(
-        response => response.text()
-      )
+      .then(response => response.text())
 
-      .then(
+      .then(xmlText => {
 
-        xmlText => {
+        const parser = new DOMParser();
 
-          const parser =
-            new DOMParser();
+        const xml = parser.parseFromString(
+          xmlText,
+          "application/xml"
+        );
 
 
-          const xml =
-            parser.parseFromString(
-              xmlText,
-              "application/xml"
+        const points = Array.from(
+          xml.getElementsByTagName("trkpt")
+        );
+
+
+        if (points.length < 2) {
+          return;
+        }
+
+
+        let totalMeters = 0;
+
+        let elevations = [];
+
+
+        function haversine(
+          lat1,
+          lon1,
+          lat2,
+          lon2
+        ) {
+
+          const R = 6371000;
+
+          const rad = Math.PI / 180;
+
+          const dLat = (lat2 - lat1) * rad;
+
+          const dLon = (lon2 - lon1) * rad;
+
+
+          const a =
+            Math.sin(dLat / 2) *
+            Math.sin(dLat / 2)
+            +
+            Math.cos(lat1 * rad) *
+            Math.cos(lat2 * rad) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+
+          return R * 2 *
+            Math.atan2(
+              Math.sqrt(a),
+              Math.sqrt(1 - a)
             );
-
-
-          const points =
-            Array.from(
-              xml.getElementsByTagName(
-                "trkpt"
-              )
-            );
-
-
-          if (points.length < 2) {
-            return;
-          }
-
-
-          let totalMeters = 0;
-
-          let elevations = [];
-
-
-
-          function haversine(
-            lat1,
-            lon1,
-            lat2,
-            lon2
-          ) {
-
-            const R = 6371000;
-
-            const rad =
-              Math.PI / 180;
-
-
-            const dLat =
-              (lat2 - lat1) * rad;
-
-            const dLon =
-              (lon2 - lon1) * rad;
-
-
-            const a =
-
-              Math.sin(dLat / 2) *
-              Math.sin(dLat / 2)
-
-              +
-
-              Math.cos(lat1 * rad) *
-              Math.cos(lat2 * rad) *
-
-              Math.sin(dLon / 2) *
-              Math.sin(dLon / 2);
-
-
-            return R * 2 *
-              Math.atan2(
-                Math.sqrt(a),
-                Math.sqrt(1 - a)
-              );
-
-          }
-
-
-
-          for (
-            let i = 0;
-            i < points.length;
-            i++
-          ) {
-
-            const current =
-              points[i];
-
-
-            const eleNode =
-              current.getElementsByTagName(
-                "ele"
-              )[0];
-
-
-            if (eleNode) {
-
-              elevations.push(
-                Number(
-                  eleNode.textContent
-                )
-              );
-
-            }
-
-
-            if (i > 0) {
-
-              const previous =
-                points[i - 1];
-
-
-              totalMeters += haversine(
-
-                Number(
-                  previous.getAttribute(
-                    "lat"
-                  )
-                ),
-
-                Number(
-                  previous.getAttribute(
-                    "lon"
-                  )
-                ),
-
-                Number(
-                  current.getAttribute(
-                    "lat"
-                  )
-                ),
-
-                Number(
-                  current.getAttribute(
-                    "lon"
-                  )
-                )
-
-              );
-
-            }
-
-          }
-
-
-
-          if (elevations.length === 0) {
-            return;
-          }
-
-
-
-          /*
-          Smooth elevation slightly.
-
-          Window of 5 GPS points.
-          */
-
-
-          const smooth = [];
-
-
-          for (
-            let i = 0;
-            i < elevations.length;
-            i++
-          ) {
-
-            const start =
-              Math.max(
-                0,
-                i - 2
-              );
-
-
-            const end =
-              Math.min(
-                elevations.length - 1,
-                i + 2
-              );
-
-
-            let sum = 0;
-
-            let count = 0;
-
-
-            for (
-              let j = start;
-              j <= end;
-              j++
-            ) {
-
-              sum += elevations[j];
-
-              count++;
-
-            }
-
-
-            smooth.push(
-              sum / count
-            );
-
-          }
-
-
-
-          /*
-          Calculate ascent.
-
-          Ignore vertical changes
-          smaller than 0.8 meters.
-          */
-
-
-          let ascentMeters = 0;
-
-
-          for (
-            let i = 1;
-            i < smooth.length;
-            i++
-          ) {
-
-            const difference =
-              smooth[i] -
-              smooth[i - 1];
-
-
-            if (difference > 0.8) {
-
-              ascentMeters +=
-                difference;
-
-            }
-
-          }
-
-
-
-          const minMeters =
-            Math.min(...smooth);
-
-
-          const maxMeters =
-            Math.max(...smooth);
-
-
-
-          /*
-          Unit conversions
-          */
-
-
-          const miles =
-            totalMeters /
-            1609.344;
-
-
-          const feetPerMeter =
-            3.28084;
-
-
-          const gainFeet =
-            ascentMeters *
-            feetPerMeter;
-
-
-          const minFeet =
-            minMeters *
-            feetPerMeter;
-
-
-          const maxFeet =
-            maxMeters *
-            feetPerMeter;
-
-
-
-          document.getElementById(
-            "distance-stat"
-          ).textContent =
-            miles.toFixed(2) +
-            " mi";
-
-
-          document.getElementById(
-            "gain-stat"
-          ).textContent =
-            Math.round(
-              gainFeet
-            ) +
-            " ft";
-
-
-          document.getElementById(
-            "min-stat"
-          ).textContent =
-            Math.round(
-              minFeet
-            ) +
-            " ft";
-
-
-          document.getElementById(
-            "max-stat"
-          ).textContent =
-            Math.round(
-              maxFeet
-            ) +
-            " ft";
 
         }
 
-      )
 
-      .catch(
+        for (
+          let i = 0;
+          i < points.length;
+          i++
+        ) {
 
-        error => {
+          const current = points[i];
 
-          console.error(
-            "Could not calculate GPX statistics:",
-            error
+          const eleNode =
+            current.getElementsByTagName("ele")[0];
+
+
+          if (eleNode) {
+
+            elevations.push(
+              Number(eleNode.textContent)
+            );
+
+          }
+
+
+          if (i > 0) {
+
+            const previous = points[i - 1];
+
+
+            totalMeters += haversine(
+
+              Number(
+                previous.getAttribute("lat")
+              ),
+
+              Number(
+                previous.getAttribute("lon")
+              ),
+
+              Number(
+                current.getAttribute("lat")
+              ),
+
+              Number(
+                current.getAttribute("lon")
+              )
+
+            );
+
+          }
+
+        }
+
+
+        if (elevations.length === 0) {
+          return;
+        }
+
+
+        /*
+        Slight smoothing for elevation gain.
+        */
+
+        const smooth = [];
+
+
+        for (
+          let i = 0;
+          i < elevations.length;
+          i++
+        ) {
+
+          const start =
+            Math.max(0, i - 2);
+
+          const end =
+            Math.min(
+              elevations.length - 1,
+              i + 2
+            );
+
+
+          let sum = 0;
+
+          let count = 0;
+
+
+          for (
+            let j = start;
+            j <= end;
+            j++
+          ) {
+
+            sum += elevations[j];
+
+            count++;
+
+          }
+
+
+          smooth.push(
+            sum / count
           );
 
         }
 
-      );
 
+        let ascentMeters = 0;
+
+
+        for (
+          let i = 1;
+          i < smooth.length;
+          i++
+        ) {
+
+          const difference =
+            smooth[i] -
+            smooth[i - 1];
+
+
+          if (difference > 0.8) {
+
+            ascentMeters += difference;
+
+          }
+
+        }
+
+
+        const minMeters =
+          Math.min(...smooth);
+
+
+        const maxMeters =
+          Math.max(...smooth);
+
+
+        const miles =
+          totalMeters / 1609.344;
+
+
+        const feetPerMeter =
+          3.28084;
+
+
+        document.getElementById(
+          "distance-stat"
+        ).textContent =
+          miles.toFixed(2) + " mi";
+
+
+        document.getElementById(
+          "gain-stat"
+        ).textContent =
+          Math.round(
+            ascentMeters *
+            feetPerMeter
+          ) + " ft";
+
+
+        document.getElementById(
+          "min-stat"
+        ).textContent =
+          Math.round(
+            minMeters *
+            feetPerMeter
+          ) + " ft";
+
+
+        document.getElementById(
+          "max-stat"
+        ).textContent =
+          Math.round(
+            maxMeters *
+            feetPerMeter
+          ) + " ft";
+
+      })
+
+      .catch(error => {
+
+        console.error(
+          "Could not calculate GPX statistics:",
+          error
+        );
+
+      });
 
 
     /*
     ============================================================
-    PHOTO MARKERS
-    ============================================================
-
-    WHEN YOU HAVE REAL PHOTOS:
-
-    1. Upload images into:
-
-       public/maptest/photos/
-
-    Example:
-
-       public/maptest/photos/bridge.jpg
-
-
-    2. Add each photo below.
-
-    DO NOT invent coordinates.
-
-    Use real GPS coordinates from the photo
-    OR click the map to obtain them.
-
+    CAMERA MARKER ICON
     ============================================================
     */
-
-
-    const photoStops = [
-
-      /*
-      EXAMPLE — REMOVE /* and * / when ready:
-
-      {
-        lat: 39.000000,
-        lon: -75.000000,
-        title: "Creek Crossing",
-        image: "photos/creek-crossing.jpg",
-        caption:
-          "Field photograph taken during course documentation."
-      }
-
-      */
-
-    ];
-
-
-
-    /*
-    Camera icon
-    */
-
 
     const photoIcon = L.divIcon({
 
-      className:
-        "photo-marker",
+      className: "photo-marker",
 
-      html:
-        "📷",
+      html: "📷",
 
-      iconSize:
-        [34, 34],
+      iconSize: [34, 34],
 
-      iconAnchor:
-        [17, 17]
+      iconAnchor: [17, 17]
 
     });
 
 
+    /*
+    ============================================================
+    AUTOMATICALLY LOAD PHOTOS.JSON
+    ============================================================
 
-    photoStops.forEach(
+    THIS IS THE IMPORTANT PART.
 
-      stop => {
+    You do NOT edit index.html anymore.
 
-        const popup = `
+    Add photos to /photos/
 
-          <div class="photo-popup">
+    Add corresponding records to photos.json.
 
-            <h3>
-              ${stop.title}
-            </h3>
+    ============================================================
+    */
 
-            <img
-              src="${stop.image}"
-              alt="${stop.title}"
-            >
+    fetch(photoDataFile)
 
-            <p>
-              ${stop.caption}
-            </p>
+      .then(response => {
 
-          </div>
+        if (!response.ok) {
 
-        `;
+          throw new Error(
+            "Could not load photos.json"
+          );
+
+        }
+
+        return response.json();
+
+      })
+
+      .then(photoStops => {
 
 
-        L.marker(
+        photoStops.forEach(stop => {
 
-          [
-            stop.lat,
-            stop.lon
-          ],
 
-          {
-            icon: photoIcon,
+          /*
+          Ignore records that do not
+          have a valid latitude/longitude.
+          */
 
-            title:
-              stop.title
+          if (
+            typeof stop.lat !== "number" ||
+            typeof stop.lon !== "number"
+          ) {
+
+            return;
+
           }
 
-        )
 
-        .bindPopup(
-          popup,
-          {
-            maxWidth: 290
+          const title =
+            stop.title ||
+            "Field Photo";
+
+
+          const caption =
+            stop.caption ||
+            "";
+
+
+          const image =
+            stop.image ||
+            "";
+
+
+          let popup = `
+
+            <div class="photo-popup">
+
+              <h3>
+                ${title}
+              </h3>
+
+          `;
+
+
+          if (image) {
+
+            popup += `
+
+              <img
+                src="${image}"
+                alt="${title}"
+              >
+
+            `;
+
           }
-        )
 
-        .addTo(
-          photoLayer
+
+          if (caption) {
+
+            popup += `
+
+              <p>
+                ${caption}
+              </p>
+
+            `;
+
+          }
+
+
+          popup += `
+            </div>
+          `;
+
+
+          L.marker(
+            [
+              stop.lat,
+              stop.lon
+            ],
+            {
+              icon: photoIcon,
+              title: title
+            }
+          )
+
+          .bindPopup(
+            popup,
+            {
+              maxWidth: 300
+            }
+          )
+
+          .addTo(photoLayer);
+
+        });
+
+      })
+
+      .catch(error => {
+
+        console.warn(
+          "Photo markers were not loaded:",
+          error
         );
 
-      }
-
-    );
-
+      });
 
 
     /*
     ============================================================
-    CLICK MAP TO FIND PHOTO COORDINATES
-    ============================================================
-
-    Click anywhere on the map.
-
-    Leaflet will show exact latitude
-    and longitude.
-
-    You can copy those numbers later
-    into photoStops above.
+    CLICK MAP TO GET COORDINATES
     ============================================================
     */
 
-
     map.on(
-
       "click",
-
       function(event) {
 
         const lat =
-          event.latlng.lat
-          .toFixed(6);
-
+          event.latlng.lat.toFixed(6);
 
         const lon =
-          event.latlng.lng
-          .toFixed(6);
+          event.latlng.lng.toFixed(6);
 
 
         L.popup()
@@ -1085,7 +871,7 @@
 
           .setContent(
 
-            "<strong>Map coordinates</strong><br>" +
+            "<strong>Photo location</strong><br>" +
 
             "Latitude: " +
             lat +
@@ -1100,7 +886,6 @@
           .openOn(map);
 
       }
-
     );
 
 
