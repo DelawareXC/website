@@ -12,14 +12,13 @@
   <title>Delaware XC Interactive Course Map</title>
 
 
-  <!-- Leaflet CSS -->
+  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
-
-  <!-- Leaflet Elevation CSS -->
+  <!-- Elevation Profile -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.css"
@@ -28,32 +27,65 @@
 
   <style>
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
+      background: #f5f6f7;
       color: #222;
     }
 
-
     .page-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid #dddddd;
+      padding: 20px 24px 16px;
+      background: white;
+      border-bottom: 1px solid #ddd;
     }
-
 
     .page-header h1 {
-      margin: 0 0 5px 0;
-      font-size: 24px;
+      margin: 0 0 6px;
+      font-size: 25px;
     }
-
 
     .page-header p {
       margin: 0;
-      color: #666666;
+      color: #666;
       font-size: 14px;
     }
 
+
+    /* STAT CARDS */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 16px 24px;
+      background: white;
+    }
+
+    .stat {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: #fafafa;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+
+    /* MAP */
 
     #map {
       width: 100%;
@@ -61,23 +93,86 @@
     }
 
 
+    /* ELEVATION */
+
     .profile-section {
-      padding: 20px 24px 30px 24px;
+      margin-top: 14px;
+      padding: 20px 24px 30px;
+      background: white;
     }
 
-
     .profile-section h2 {
-      margin-top: 0;
-      margin-bottom: 10px;
+      margin: 0 0 4px;
       font-size: 20px;
     }
 
+    .profile-note {
+      margin: 0 0 14px;
+      color: #666;
+      font-size: 13px;
+    }
 
     #elevation-profile {
       width: 100%;
-      min-height: 260px;
+      min-height: 270px;
     }
 
+
+    /* PHOTO MARKERS */
+
+    .photo-marker {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 50%;
+      width: 34px !important;
+      height: 34px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .photo-popup {
+      width: 260px;
+    }
+
+    .photo-popup img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .photo-popup h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
+
+    .photo-popup p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+
+    @media (max-width: 700px) {
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 12px;
+      }
+
+      .page-header,
+      .profile-section {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      #map {
+        height: 480px;
+      }
+
+    }
 
   </style>
 
@@ -87,7 +182,7 @@
 <body>
 
 
-  <!-- PAGE TITLE -->
+  <!-- TITLE -->
 
   <div class="page-header">
 
@@ -96,14 +191,69 @@
     </h1>
 
     <p>
-      GPS course documentation with topographic mapping and elevation profile
+      GPS course documentation · topographic mapping · elevation · slope · field photography
     </p>
 
   </div>
 
 
 
-  <!-- INTERACTIVE MAP -->
+  <!-- CLEAN SUMMARY -->
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-label">
+        Distance
+      </div>
+      <div
+        class="stat-value"
+        id="distance-stat">
+        —
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Elevation Gain
+      </div>
+      <div
+        class="stat-value"
+        id="gain-stat">
+        —
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Lowest Point
+      </div>
+      <div
+        class="stat-value"
+        id="min-stat">
+        —
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Highest Point
+      </div>
+      <div
+        class="stat-value"
+        id="max-stat">
+        —
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <!-- MAP -->
 
   <div id="map"></div>
 
@@ -114,8 +264,13 @@
   <div class="profile-section">
 
     <h2>
-      Elevation Profile
+      Elevation & Grade Profile
     </h2>
+
+    <p class="profile-note">
+      Distance is shown in miles and elevation in feet.
+      Very short GPS elevation fluctuations can create artificial grade spikes.
+    </p>
 
     <div id="elevation-profile"></div>
 
@@ -123,23 +278,17 @@
 
 
 
-  <!-- LEAFLET -->
+  <!-- JAVASCRIPT LIBRARIES -->
 
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
   </script>
 
 
-
-  <!-- LEAFLET GPX -->
-
   <script
     src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js">
   </script>
 
-
-
-  <!-- LEAFLET ELEVATION -->
 
   <script
     src="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.js">
@@ -149,15 +298,25 @@
 
   <script>
 
-
     /*
-    ==================================================
-    1. CREATE MAP
-    ==================================================
+    ============================================================
+    BASIC SETTINGS
+    ============================================================
     */
 
 
-    var map = L.map('map').setView(
+    const gpxFile = "test-walk.gpx";
+
+
+
+    /*
+    ============================================================
+    MAP
+    ============================================================
+    */
+
+
+    const map = L.map("map").setView(
       [39.2, -75.5],
       8
     );
@@ -165,20 +324,22 @@
 
 
     /*
-    ==================================================
-    2. STREET MAP
-    ==================================================
+    ============================================================
+    BASE MAP 1 — STREET
+    ============================================================
     */
 
 
-    var street = L.tileLayer(
+    const street = L.tileLayer(
 
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 
       {
 
         attribution:
-          '&copy; OpenStreetMap contributors'
+          "&copy; OpenStreetMap contributors",
+
+        maxZoom: 19
 
       }
 
@@ -187,20 +348,20 @@
 
 
     /*
-    ==================================================
-    3. TOPOGRAPHIC MAP
-    ==================================================
+    ============================================================
+    BASE MAP 2 — TOPOGRAPHIC / CONTOURS
+    ============================================================
     */
 
 
-    var topo = L.tileLayer(
+    const topo = L.tileLayer(
 
-      'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+      "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
 
       {
 
         attribution:
-          'Map data © OpenStreetMap contributors | Map style © OpenTopoMap',
+          "Map data © OpenStreetMap contributors | Map style © OpenTopoMap",
 
         maxZoom: 17
 
@@ -209,24 +370,29 @@
     );
 
 
-
-    /*
-    Default map = Topographic
-    */
-
-
     topo.addTo(map);
 
 
 
     /*
-    ==================================================
-    4. MAP LAYER SWITCHER
-    ==================================================
+    ============================================================
+    PHOTO LAYER
+    ============================================================
     */
 
 
-    var baseMaps = {
+    const photoLayer = L.layerGroup().addTo(map);
+
+
+
+    /*
+    ============================================================
+    LAYER SWITCHER
+    ============================================================
+    */
+
+
+    const baseMaps = {
 
       "Topo / Contours": topo,
 
@@ -235,25 +401,52 @@
     };
 
 
+    const overlays = {
+
+      "Field Photos": photoLayer
+
+    };
+
+
     L.control.layers(
-      baseMaps
+
+      baseMaps,
+
+      overlays,
+
+      {
+        collapsed: true
+      }
+
     ).addTo(map);
 
 
 
     /*
-    ==================================================
-    5. GPX ROUTE
-    ==================================================
+    ============================================================
+    SCALE — MILES / FEET
+    ============================================================
     */
 
 
-    var gpxFile =
-      'test-walk.gpx';
+    L.control.scale({
+
+      metric: false,
+
+      imperial: true
+
+    }).addTo(map);
 
 
 
-    var gpxRoute = new L.GPX(
+    /*
+    ============================================================
+    GPX ROUTE
+    ============================================================
+    */
+
+
+    const route = new L.GPX(
 
       gpxFile,
 
@@ -263,9 +456,13 @@
 
         polyline_options: {
 
-          weight: 5,
+          weight: 6,
 
-          opacity: 0.9
+          opacity: 0.9,
+
+          lineCap: "round",
+
+          lineJoin: "round"
 
         }
 
@@ -273,114 +470,638 @@
 
     )
 
+
     .on(
 
-      'loaded',
+      "loaded",
 
-      function(e) {
-
-        /*
-        Automatically zoom map
-        to entire GPX route
-        */
+      function(event) {
 
         map.fitBounds(
-          e.target.getBounds(),
+
+          event.target.getBounds(),
+
           {
-            padding: [30, 30]
+            padding: [25, 25]
           }
+
         );
 
       }
 
     )
 
+
     .addTo(map);
 
 
 
     /*
-    ==================================================
-    6. ELEVATION PROFILE
-    ==================================================
+    ============================================================
+    ELEVATION PROFILE
+    ============================================================
     */
 
 
-    var elevation = L.control.elevation(
+    const elevation = L.control.elevation({
 
-      {
+      theme: "lightblue-theme",
 
-        /*
-        Put graph BELOW map
-        rather than over map
-        */
+      detached: true,
 
-        detached: true,
+      elevationDiv:
+        "#elevation-profile",
 
+      followMarker: true,
 
-        elevationDiv:
-          "#elevation-profile",
+      autofitBounds: false,
 
+      /*
+      IMPORTANT:
+      miles + feet
+      */
 
-        /*
-        Display settings
-        */
+      imperial: true,
 
-        summary: "inline",
+      distance: true,
 
-        distance: true,
+      altitude: true,
 
-        altitude: true,
+      /*
+      Show grade/slope profile
+      */
 
-        slope: true,
+      slope: true,
 
+      speed: false,
 
-        /*
-        We do not need these yet
-        */
+      time: false,
 
-        speed: false,
+      /*
+      We make our own cleaner
+      summary cards above,
+      so hide plugin summary.
+      */
 
-        time: false,
+      summary: false,
 
+      legend: true,
 
-        /*
-        Metric system initially
-        because GPX elevation data
-        is commonly stored this way.
-        We can convert to miles/feet later.
-        */
+      ruler: true,
 
-        imperial: false,
+      downloadLink: false,
 
+      closeBtn: false
 
-        /*
-        Chart interaction
-        */
-
-        followMarker: true,
-
-        autofitBounds: false
-
-      }
-
-    );
+    });
 
 
     elevation.addTo(map);
-
-
-
-    /*
-    Read the SAME GPX file
-    for elevation data
-    */
 
 
     elevation.load(
       gpxFile
     );
 
+
+
+    /*
+    ============================================================
+    CLEAN STATISTICS
+    ============================================================
+
+    Reads the GPX directly.
+
+    Elevation gain uses a simple smoothing threshold
+    so tiny GPS height fluctuations are not all counted
+    as real climbing.
+    ============================================================
+    */
+
+
+    fetch(gpxFile)
+
+      .then(
+        response => response.text()
+      )
+
+      .then(
+
+        xmlText => {
+
+          const parser =
+            new DOMParser();
+
+
+          const xml =
+            parser.parseFromString(
+              xmlText,
+              "application/xml"
+            );
+
+
+          const points =
+            Array.from(
+              xml.getElementsByTagName(
+                "trkpt"
+              )
+            );
+
+
+          if (points.length < 2) {
+            return;
+          }
+
+
+          let totalMeters = 0;
+
+          let elevations = [];
+
+
+
+          function haversine(
+            lat1,
+            lon1,
+            lat2,
+            lon2
+          ) {
+
+            const R = 6371000;
+
+            const rad =
+              Math.PI / 180;
+
+
+            const dLat =
+              (lat2 - lat1) * rad;
+
+            const dLon =
+              (lon2 - lon1) * rad;
+
+
+            const a =
+
+              Math.sin(dLat / 2) *
+              Math.sin(dLat / 2)
+
+              +
+
+              Math.cos(lat1 * rad) *
+              Math.cos(lat2 * rad) *
+
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
+
+
+            return R * 2 *
+              Math.atan2(
+                Math.sqrt(a),
+                Math.sqrt(1 - a)
+              );
+
+          }
+
+
+
+          for (
+            let i = 0;
+            i < points.length;
+            i++
+          ) {
+
+            const current =
+              points[i];
+
+
+            const eleNode =
+              current.getElementsByTagName(
+                "ele"
+              )[0];
+
+
+            if (eleNode) {
+
+              elevations.push(
+                Number(
+                  eleNode.textContent
+                )
+              );
+
+            }
+
+
+            if (i > 0) {
+
+              const previous =
+                points[i - 1];
+
+
+              totalMeters += haversine(
+
+                Number(
+                  previous.getAttribute(
+                    "lat"
+                  )
+                ),
+
+                Number(
+                  previous.getAttribute(
+                    "lon"
+                  )
+                ),
+
+                Number(
+                  current.getAttribute(
+                    "lat"
+                  )
+                ),
+
+                Number(
+                  current.getAttribute(
+                    "lon"
+                  )
+                )
+
+              );
+
+            }
+
+          }
+
+
+
+          if (elevations.length === 0) {
+            return;
+          }
+
+
+
+          /*
+          Smooth elevation slightly.
+
+          Window of 5 GPS points.
+          */
+
+
+          const smooth = [];
+
+
+          for (
+            let i = 0;
+            i < elevations.length;
+            i++
+          ) {
+
+            const start =
+              Math.max(
+                0,
+                i - 2
+              );
+
+
+            const end =
+              Math.min(
+                elevations.length - 1,
+                i + 2
+              );
+
+
+            let sum = 0;
+
+            let count = 0;
+
+
+            for (
+              let j = start;
+              j <= end;
+              j++
+            ) {
+
+              sum += elevations[j];
+
+              count++;
+
+            }
+
+
+            smooth.push(
+              sum / count
+            );
+
+          }
+
+
+
+          /*
+          Calculate ascent.
+
+          Ignore vertical changes
+          smaller than 0.8 meters.
+          */
+
+
+          let ascentMeters = 0;
+
+
+          for (
+            let i = 1;
+            i < smooth.length;
+            i++
+          ) {
+
+            const difference =
+              smooth[i] -
+              smooth[i - 1];
+
+
+            if (difference > 0.8) {
+
+              ascentMeters +=
+                difference;
+
+            }
+
+          }
+
+
+
+          const minMeters =
+            Math.min(...smooth);
+
+
+          const maxMeters =
+            Math.max(...smooth);
+
+
+
+          /*
+          Unit conversions
+          */
+
+
+          const miles =
+            totalMeters /
+            1609.344;
+
+
+          const feetPerMeter =
+            3.28084;
+
+
+          const gainFeet =
+            ascentMeters *
+            feetPerMeter;
+
+
+          const minFeet =
+            minMeters *
+            feetPerMeter;
+
+
+          const maxFeet =
+            maxMeters *
+            feetPerMeter;
+
+
+
+          document.getElementById(
+            "distance-stat"
+          ).textContent =
+            miles.toFixed(2) +
+            " mi";
+
+
+          document.getElementById(
+            "gain-stat"
+          ).textContent =
+            Math.round(
+              gainFeet
+            ) +
+            " ft";
+
+
+          document.getElementById(
+            "min-stat"
+          ).textContent =
+            Math.round(
+              minFeet
+            ) +
+            " ft";
+
+
+          document.getElementById(
+            "max-stat"
+          ).textContent =
+            Math.round(
+              maxFeet
+            ) +
+            " ft";
+
+        }
+
+      )
+
+      .catch(
+
+        error => {
+
+          console.error(
+            "Could not calculate GPX statistics:",
+            error
+          );
+
+        }
+
+      );
+
+
+
+    /*
+    ============================================================
+    PHOTO MARKERS
+    ============================================================
+
+    WHEN YOU HAVE REAL PHOTOS:
+
+    1. Upload images into:
+
+       public/maptest/photos/
+
+    Example:
+
+       public/maptest/photos/bridge.jpg
+
+
+    2. Add each photo below.
+
+    DO NOT invent coordinates.
+
+    Use real GPS coordinates from the photo
+    OR click the map to obtain them.
+
+    ============================================================
+    */
+
+
+    const photoStops = [
+
+      /*
+      EXAMPLE — REMOVE /* and * / when ready:
+
+      {
+        lat: 39.000000,
+        lon: -75.000000,
+        title: "Creek Crossing",
+        image: "photos/creek-crossing.jpg",
+        caption:
+          "Field photograph taken during course documentation."
+      }
+
+      */
+
+    ];
+
+
+
+    /*
+    Camera icon
+    */
+
+
+    const photoIcon = L.divIcon({
+
+      className:
+        "photo-marker",
+
+      html:
+        "📷",
+
+      iconSize:
+        [34, 34],
+
+      iconAnchor:
+        [17, 17]
+
+    });
+
+
+
+    photoStops.forEach(
+
+      stop => {
+
+        const popup = `
+
+          <div class="photo-popup">
+
+            <h3>
+              ${stop.title}
+            </h3>
+
+            <img
+              src="${stop.image}"
+              alt="${stop.title}"
+            >
+
+            <p>
+              ${stop.caption}
+            </p>
+
+          </div>
+
+        `;
+
+
+        L.marker(
+
+          [
+            stop.lat,
+            stop.lon
+          ],
+
+          {
+            icon: photoIcon,
+
+            title:
+              stop.title
+          }
+
+        )
+
+        .bindPopup(
+          popup,
+          {
+            maxWidth: 290
+          }
+        )
+
+        .addTo(
+          photoLayer
+        );
+
+      }
+
+    );
+
+
+
+    /*
+    ============================================================
+    CLICK MAP TO FIND PHOTO COORDINATES
+    ============================================================
+
+    Click anywhere on the map.
+
+    Leaflet will show exact latitude
+    and longitude.
+
+    You can copy those numbers later
+    into photoStops above.
+    ============================================================
+    */
+
+
+    map.on(
+
+      "click",
+
+      function(event) {
+
+        const lat =
+          event.latlng.lat
+          .toFixed(6);
+
+
+        const lon =
+          event.latlng.lng
+          .toFixed(6);
+
+
+        L.popup()
+
+          .setLatLng(
+            event.latlng
+          )
+
+          .setContent(
+
+            "<strong>Map coordinates</strong><br>" +
+
+            "Latitude: " +
+            lat +
+
+            "<br>" +
+
+            "Longitude: " +
+            lon
+
+          )
+
+          .openOn(map);
+
+      }
+
+    );
 
 
   </script>
