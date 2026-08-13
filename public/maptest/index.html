@@ -1,73 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delaware XC GPX Test</title>
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Delaware XC Interactive Course Map</title>
+
+
+  <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  >
+
+
+  <!-- Leaflet Elevation CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.css"
+  >
+
 
   <style>
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #222;
     }
 
-    h1 {
-      margin: 0;
-      padding: 14px;
-      font-size: 22px;
+
+    .page-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #dddddd;
     }
+
+
+    .page-header h1 {
+      margin: 0 0 5px 0;
+      font-size: 24px;
+    }
+
+
+    .page-header p {
+      margin: 0;
+      color: #666666;
+      font-size: 14px;
+    }
+
 
     #map {
-      height: 600px;
       width: 100%;
+      height: 600px;
     }
+
+
+    .profile-section {
+      padding: 20px 24px 30px 24px;
+    }
+
+
+    .profile-section h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+
+    #elevation-profile {
+      width: 100%;
+      min-height: 260px;
+    }
+
+
   </style>
+
 </head>
+
+
 <body>
 
-  <h1>Delaware XC GPX Test</h1>
+
+  <!-- PAGE TITLE -->
+
+  <div class="page-header">
+
+    <h1>
+      Delaware XC Interactive Course Map
+    </h1>
+
+    <p>
+      GPS course documentation with topographic mapping and elevation profile
+    </p>
+
+  </div>
+
+
+
+  <!-- INTERACTIVE MAP -->
+
   <div id="map"></div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
 
-  <script>
-    var map = L.map('map').setView([39.2, -75.5], 8);
 
-   var street = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors'
-  }
-);
+  <!-- ELEVATION PROFILE -->
 
-var topo = L.tileLayer(
-  'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-  {
-    attribution: 'Map data © OpenStreetMap contributors | Map style © OpenTopoMap'
-  }
-);
+  <div class="profile-section">
 
-topo.addTo(map);
+    <h2>
+      Elevation Profile
+    </h2>
 
-var baseMaps = {
-  "Topo / Contours": topo,
-  "Street Map": street
-};
+    <div id="elevation-profile"></div>
 
-L.control.layers(baseMaps).addTo(map);
+  </div>
 
-    new L.GPX('test-walk.gpx', {
-      async: true
-    }).on('loaded', function(e) {
-      map.fitBounds(e.target.getBounds());
-    }).addTo(map);
+
+
+  <!-- LEAFLET -->
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
   </script>
 
+
+
+  <!-- LEAFLET GPX -->
+
+  <script
+    src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js">
+  </script>
+
+
+
+  <!-- LEAFLET ELEVATION -->
+
+  <script
+    src="https://unpkg.com/@raruto/leaflet-elevation@2.5.0/dist/leaflet-elevation.js">
+  </script>
+
+
+
+  <script>
+
+
+    /*
+    ==================================================
+    1. CREATE MAP
+    ==================================================
+    */
+
+
+    var map = L.map('map').setView(
+      [39.2, -75.5],
+      8
+    );
+
+
+
+    /*
+    ==================================================
+    2. STREET MAP
+    ==================================================
+    */
+
+
+    var street = L.tileLayer(
+
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+      {
+
+        attribution:
+          '&copy; OpenStreetMap contributors'
+
+      }
+
+    );
+
+
+
+    /*
+    ==================================================
+    3. TOPOGRAPHIC MAP
+    ==================================================
+    */
+
+
+    var topo = L.tileLayer(
+
+      'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+
+      {
+
+        attribution:
+          'Map data © OpenStreetMap contributors | Map style © OpenTopoMap',
+
+        maxZoom: 17
+
+      }
+
+    );
+
+
+
+    /*
+    Default map = Topographic
+    */
+
+
+    topo.addTo(map);
+
+
+
+    /*
+    ==================================================
+    4. MAP LAYER SWITCHER
+    ==================================================
+    */
+
+
+    var baseMaps = {
+
+      "Topo / Contours": topo,
+
+      "Street Map": street
+
+    };
+
+
+    L.control.layers(
+      baseMaps
+    ).addTo(map);
+
+
+
+    /*
+    ==================================================
+    5. GPX ROUTE
+    ==================================================
+    */
+
+
+    var gpxFile =
+      'test-walk.gpx';
+
+
+
+    var gpxRoute = new L.GPX(
+
+      gpxFile,
+
+      {
+
+        async: true,
+
+        polyline_options: {
+
+          weight: 5,
+
+          opacity: 0.9
+
+        }
+
+      }
+
+    )
+
+    .on(
+
+      'loaded',
+
+      function(e) {
+
+        /*
+        Automatically zoom map
+        to entire GPX route
+        */
+
+        map.fitBounds(
+          e.target.getBounds(),
+          {
+            padding: [30, 30]
+          }
+        );
+
+      }
+
+    )
+
+    .addTo(map);
+
+
+
+    /*
+    ==================================================
+    6. ELEVATION PROFILE
+    ==================================================
+    */
+
+
+    var elevation = L.control.elevation(
+
+      {
+
+        /*
+        Put graph BELOW map
+        rather than over map
+        */
+
+        detached: true,
+
+
+        elevationDiv:
+          "#elevation-profile",
+
+
+        /*
+        Display settings
+        */
+
+        summary: "inline",
+
+        distance: true,
+
+        altitude: true,
+
+        slope: true,
+
+
+        /*
+        We do not need these yet
+        */
+
+        speed: false,
+
+        time: false,
+
+
+        /*
+        Metric system initially
+        because GPX elevation data
+        is commonly stored this way.
+        We can convert to miles/feet later.
+        */
+
+        imperial: false,
+
+
+        /*
+        Chart interaction
+        */
+
+        followMarker: true,
+
+        autofitBounds: false
+
+      }
+
+    );
+
+
+    elevation.addTo(map);
+
+
+
+    /*
+    Read the SAME GPX file
+    for elevation data
+    */
+
+
+    elevation.load(
+      gpxFile
+    );
+
+
+
+  </script>
+
+
 </body>
+
 </html>
