@@ -112,6 +112,8 @@
       min-height: 270px;
     }
 
+    /* PHOTO MARKER */
+
     .photo-marker {
       background: white;
       border: 2px solid #333;
@@ -122,6 +124,7 @@
       align-items: center;
       justify-content: center;
       font-size: 19px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35);
     }
 
     .photo-popup {
@@ -145,6 +148,30 @@
       margin: 7px 0 0;
       font-size: 13px;
       line-height: 1.45;
+    }
+
+    /* START / FINISH MARKERS */
+
+    .course-marker {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 15px;
+      color: white;
+      border: 3px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+    }
+
+    .start-marker {
+      background: #228b22;
+    }
+
+    .finish-marker {
+      background: #c62828;
     }
 
     @media (max-width: 700px) {
@@ -233,7 +260,7 @@
 
     <p class="profile-note">
       Distance is shown in miles and elevation in feet.
-      Grade is derived from the GPX elevation data and may contain GPS-related spikes.
+      Very short GPS elevation fluctuations can create artificial grade spikes.
     </p>
 
     <div id="elevation-profile"></div>
@@ -303,10 +330,6 @@
     );
 
 
-    /*
-    Default = Topo
-    */
-
     topo.addTo(map);
 
 
@@ -318,6 +341,16 @@
 
     const photoLayer =
       L.layerGroup();
+
+
+    /*
+    ============================================================
+    COURSE MARKER LAYER
+    ============================================================
+    */
+
+    const courseMarkerLayer =
+      L.layerGroup().addTo(map);
 
 
     /*
@@ -348,7 +381,7 @@
 
     /*
     ============================================================
-    IMPERIAL SCALE
+    SCALE
     ============================================================
     */
 
@@ -387,7 +420,49 @@
 
     /*
     ============================================================
-    LOAD PHOTOS.JSON
+    START / FINISH ICONS
+    ============================================================
+    */
+
+    const startIcon =
+      L.divIcon({
+
+        className:
+          "course-marker start-marker",
+
+        html:
+          "S",
+
+        iconSize:
+          [32, 32],
+
+        iconAnchor:
+          [16, 16]
+
+      });
+
+
+    const finishIcon =
+      L.divIcon({
+
+        className:
+          "course-marker finish-marker",
+
+        html:
+          "F",
+
+        iconSize:
+          [32, 32],
+
+        iconAnchor:
+          [16, 16]
+
+      });
+
+
+    /*
+    ============================================================
+    LOAD PHOTOS
     ============================================================
     */
 
@@ -542,45 +617,52 @@
     ============================================================
     */
 
-    const route = new L.GPX(
-      gpxFile,
-      {
+    const route =
+      new L.GPX(
+        gpxFile,
+        {
 
-        async: true,
+          async: true,
 
-        /*
-        Disable default
-        start/end image markers
-        */
+          /*
+          Disable leaflet-gpx image markers.
+          We create our own Start / Finish markers instead.
+          */
 
-        marker_options: {
+          marker_options: {
 
-          startIconUrl: null,
+            startIconUrl: null,
 
-          endIconUrl: null,
+            endIconUrl: null,
 
-          shadowUrl: null
+            shadowUrl: null
 
-        },
+          },
 
-        polyline_options: {
+          polyline_options: {
 
-          weight: 6,
+            weight: 6,
 
-          opacity: 0.9,
+            opacity: 0.9,
 
-          lineCap: "round",
+            lineCap: "round",
 
-          lineJoin: "round"
+            lineJoin: "round"
+
+          }
 
         }
+      );
 
-      }
-    )
 
-    .on(
+    route.on(
       "loaded",
       function(event) {
+
+
+        /*
+        Fit map to route.
+        */
 
         map.fitBounds(
           event.target.getBounds(),
@@ -589,10 +671,167 @@
           }
         );
 
-      }
-    )
 
-    .addTo(map);
+        /*
+        Read GPX directly so Start and Finish
+        always use the actual first and last track points.
+        */
+
+        fetch(
+          gpxFile +
+          "?v=" +
+          Date.now()
+        )
+
+          .then(
+            response =>
+              response.text()
+          )
+
+          .then(xmlText => {
+
+
+            const parser =
+              new DOMParser();
+
+
+            const xml =
+              parser.parseFromString(
+                xmlText,
+                "application/xml"
+              );
+
+
+            const points =
+              Array.from(
+                xml.getElementsByTagName(
+                  "trkpt"
+                )
+              );
+
+
+            if (
+              points.length < 2
+            ) {
+
+              return;
+
+            }
+
+
+            const first =
+              points[0];
+
+
+            const last =
+              points[
+                points.length - 1
+              ];
+
+
+            const startLat =
+              Number(
+                first.getAttribute(
+                  "lat"
+                )
+              );
+
+
+            const startLon =
+              Number(
+                first.getAttribute(
+                  "lon"
+                )
+              );
+
+
+            const finishLat =
+              Number(
+                last.getAttribute(
+                  "lat"
+                )
+              );
+
+
+            const finishLon =
+              Number(
+                last.getAttribute(
+                  "lon"
+                )
+              );
+
+
+            if (
+              Number.isFinite(startLat) &&
+              Number.isFinite(startLon)
+            ) {
+
+
+              L.marker(
+                [
+                  startLat,
+                  startLon
+                ],
+                {
+                  icon: startIcon,
+                  title: "Start"
+                }
+              )
+
+              .bindPopup(
+                "<strong>Start</strong>"
+              )
+
+              .addTo(
+                courseMarkerLayer
+              );
+
+            }
+
+
+            if (
+              Number.isFinite(finishLat) &&
+              Number.isFinite(finishLon)
+            ) {
+
+
+              L.marker(
+                [
+                  finishLat,
+                  finishLon
+                ],
+                {
+                  icon: finishIcon,
+                  title: "Finish"
+                }
+              )
+
+              .bindPopup(
+                "<strong>Finish</strong>"
+              )
+
+              .addTo(
+                courseMarkerLayer
+              );
+
+            }
+
+          })
+
+          .catch(error => {
+
+            console.error(
+              "Start/Finish marker error:",
+              error
+            );
+
+          });
+
+      }
+    );
+
+
+    route.addTo(map);
 
 
     /*
@@ -619,10 +858,6 @@
         autofitBounds:
           false,
 
-        /*
-        US units
-        */
-
         imperial:
           true,
 
@@ -631,11 +866,6 @@
 
         altitude:
           true,
-
-        /*
-        ORIGINAL PLUGIN SLOPE
-        No custom smoothing
-        */
 
         slope:
           true,
@@ -717,9 +947,12 @@
         }
 
 
-        let totalMeters = 0;
+        let totalMeters =
+          0;
 
-        let elevations = [];
+
+        let elevations =
+          [];
 
 
         function haversine(
@@ -839,37 +1072,33 @@
 
             const lat1 =
               Number(
-                previous
-                  .getAttribute(
-                    "lat"
-                  )
+                previous.getAttribute(
+                  "lat"
+                )
               );
 
 
             const lon1 =
               Number(
-                previous
-                  .getAttribute(
-                    "lon"
-                  )
+                previous.getAttribute(
+                  "lon"
+                )
               );
 
 
             const lat2 =
               Number(
-                current
-                  .getAttribute(
-                    "lat"
-                  )
+                current.getAttribute(
+                  "lat"
+                )
               );
 
 
             const lon2 =
               Number(
-                current
-                  .getAttribute(
-                    "lon"
-                  )
+                current.getAttribute(
+                  "lon"
+                )
               );
 
 
@@ -922,11 +1151,12 @@
 
 
         /*
-        Raw ascent estimate
-        from GPX elevations.
+        Raw cumulative ascent
+        from GPX elevation values.
         */
 
-        let ascentMeters = 0;
+        let ascentMeters =
+          0;
 
 
         for (
@@ -1024,27 +1254,22 @@
 
     /*
     ============================================================
-    BASE MAP MODE SWITCHING
+    BASE MAP SWITCHING
     ============================================================
 
-    TOPO:
+    Topo:
+      route
+      Start / Finish
+      elevation / grade
       photos hidden
-      elevation + slope visible
 
-    STREET:
+    Street:
+      route
+      Start / Finish
       photos visible
-      profile hidden
-
-    Leaflet fires baselayerchange
-    when user switches base layer.
+      elevation / grade remains visible
     ============================================================
     */
-
-
-    const profileSection =
-      document.getElementById(
-        "profile-section"
-      );
 
 
     const modeNote =
@@ -1057,10 +1282,6 @@
       "baselayerchange",
       function(event) {
 
-
-        /*
-        STREET MODE
-        */
 
         if (
           event.name ===
@@ -1081,23 +1302,12 @@
           }
 
 
-          profileSection
-            .style
-            .display =
-              "none";
+          modeNote.textContent =
 
-
-          modeNote
-            .textContent =
-
-              "Street mode: field photography and course location documentation.";
+            "Street mode: field photography, course location, elevation and grade.";
 
         }
 
-
-        /*
-        TOPO MODE
-        */
 
         if (
           event.name ===
@@ -1118,16 +1328,9 @@
           }
 
 
-          profileSection
-            .style
-            .display =
-              "block";
+          modeNote.textContent =
 
-
-          modeNote
-            .textContent =
-
-              "Topo mode: elevation and grade analysis.";
+            "Topo mode: elevation and grade analysis.";
 
         }
 
@@ -1137,7 +1340,7 @@
 
     /*
     ============================================================
-    CLICK MAP TO GET PHOTO COORDINATES
+    CLICK MAP TO GET COORDINATES
     ============================================================
     */
 
