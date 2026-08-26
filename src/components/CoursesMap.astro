@@ -1,0 +1,187 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+
+<section class="courses-map-section" aria-labelledby="courses-map-heading">
+  <div class="container">
+    <div class="courses-map-header">
+      <div>
+        <p class="section-kicker light">Interactive course atlas</p>
+        <h2 id="courses-map-heading">Delaware statewide view</h2>
+        <p>Explore the state now. Verified course locations and routes will be added in the next stage.</p>
+      </div>
+      <button id="reset-delaware-view" class="map-reset" type="button">Reset Delaware view</button>
+    </div>
+
+    <div class="courses-map-frame">
+      <div
+        id="delaware-courses-map"
+        class="courses-map"
+        role="region"
+        aria-label="Interactive map centered on the state of Delaware"
+      ></div>
+      <noscript>
+        <p class="map-fallback">JavaScript is required to use the interactive Delaware course map.</p>
+      </noscript>
+    </div>
+
+    <div class="map-notes">
+      <p><strong>Map controls:</strong> drag to move, use the plus and minus buttons to zoom, and select a street or topographic base map.</p>
+      <p id="map-load-status" role="status">Loading the interactive Delaware map…</p>
+    </div>
+  </div>
+</section>
+
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script is:inline>
+  (() => {
+    const mapElement = document.getElementById('delaware-courses-map');
+    const resetButton = document.getElementById('reset-delaware-view');
+    const status = document.getElementById('map-load-status');
+
+    if (!mapElement || mapElement.dataset.initialized === 'true') return;
+
+    if (!window.L) {
+      if (status) status.textContent = 'The interactive map could not be loaded. Please refresh the page and try again.';
+      return;
+    }
+
+    mapElement.dataset.initialized = 'true';
+
+    const delawareBounds = window.L.latLngBounds(
+      [38.42, -75.79],
+      [39.84, -74.98]
+    );
+
+    const mapBounds = window.L.latLngBounds(
+      [38.15, -76.08],
+      [40.05, -74.68]
+    );
+
+    const map = window.L.map(mapElement, {
+      zoomControl: true,
+      scrollWheelZoom: false,
+      keyboard: true,
+      minZoom: 7,
+      maxBounds: mapBounds,
+      maxBoundsViscosity: 1
+    });
+
+    const street = window.L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }
+    );
+
+    const topographic = window.L.tileLayer(
+      'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+      {
+        attribution: 'Map data &copy; OpenStreetMap contributors | Map style &copy; OpenTopoMap',
+        maxZoom: 17
+      }
+    );
+
+    topographic.addTo(map);
+    window.L.control.layers(
+      { 'Topographic': topographic, 'Street': street },
+      null,
+      { position: 'topright', collapsed: window.innerWidth < 700 }
+    ).addTo(map);
+    window.L.control.scale({ imperial: true, metric: false }).addTo(map);
+
+    const resetView = () => map.fitBounds(delawareBounds, { padding: [24, 24] });
+    resetView();
+
+    resetButton?.addEventListener('click', resetView);
+    window.addEventListener('resize', () => map.invalidateSize());
+
+    if (status) status.textContent = 'Interactive Delaware map ready. Course markers will be added after location review.';
+  })();
+</script>
+
+<style>
+  .courses-map-section {
+    padding: clamp(4.5rem, 8vw, 7rem) 0;
+    background: var(--forest-dark);
+    color: var(--white);
+  }
+
+  .courses-map-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-bottom: 2rem;
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .courses-map-header h2 { color: var(--paper); }
+  .courses-map-header p:last-child { max-width: 680px; margin-bottom: 0; color: #cbd3cd; }
+
+  .map-reset {
+    padding: .8rem 1rem;
+    border: 1px solid #718078;
+    background: transparent;
+    color: var(--white);
+    cursor: pointer;
+    font-size: .78rem;
+    font-weight: 600;
+  }
+
+  .map-reset:hover { border-color: var(--gold); color: var(--gold); }
+
+  .courses-map-frame {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #718078;
+    background: #dce2d7;
+    box-shadow: 0 20px 50px rgba(5, 13, 9, .28);
+  }
+
+  .courses-map { width: 100%; height: clamp(480px, 62vw, 690px); }
+
+  .map-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    padding: 2rem;
+    margin: 0;
+    background: var(--paper);
+    color: var(--forest);
+    text-align: center;
+    place-items: center;
+  }
+
+  .map-notes {
+    display: flex;
+    padding-top: 1rem;
+    color: #bfc9c2;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .map-notes p { max-width: 560px; margin: 0; font-size: .72rem; }
+  .map-notes strong { color: var(--paper); }
+
+  :global(.courses-map .leaflet-control-layers),
+  :global(.courses-map .leaflet-bar a) {
+    border-color: #a9b2aa;
+    color: var(--forest);
+    font-family: var(--sans);
+  }
+
+  :global(.courses-map .leaflet-control-attribution) {
+    color: #4c554e;
+    font-size: .64rem;
+  }
+
+  @media (max-width: 700px) {
+    .courses-map-header { grid-template-columns: 1fr; gap: 1.2rem; }
+    .map-reset { width: max-content; }
+    .courses-map { height: 520px; }
+    .map-notes { flex-direction: column; gap: .65rem; }
+  }
+
+  @media (max-width: 430px) {
+    .courses-map { height: 460px; }
+  }
+</style>

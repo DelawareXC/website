@@ -1,5 +1,41 @@
 ---
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import CoursesMap from '../components/CoursesMap.astro';
+import PageHeader from '../components/PageHeader.astro';
 ---
 
-<PlaceholderPage title="Courses" description="Verified cross country course and landscape documentation will be presented here." />
+<BaseLayout
+  title="Courses"
+  description="Explore an interactive statewide map for the Delaware Cross Country Archive course collection."
+>
+  <PageHeader
+    eyebrow="Landscape and competition"
+    title="Courses"
+    intro="Explore the places where Delaware cross country is practiced, remembered, and documented. This statewide map will grow into an index of reviewed course records."
+  />
+
+  <section class="section" aria-labelledby="course-map-introduction">
+    <div class="container split-intro">
+      <p class="section-kicker">Mapping the archive</p>
+      <div>
+        <h2 id="course-map-introduction">Begin with the landscape.</h2>
+        <p class="large-copy">The first version of the course atlas provides a focused, interactive view of Delaware without requiring a large map package to be stored with the website.</p>
+        <p>Course markers, route lines, photographs, and related archive records will be added incrementally after their locations and descriptions have been reviewed.</p>
+      </div>
+    </div>
+  </section>
+
+  <CoursesMap />
+
+  <section class="section course-next-step" aria-labelledby="course-index-heading">
+    <div class="container narrow">
+      <p class="section-kicker">Next stage</p>
+      <h2 id="course-index-heading">Course locations will be added one at a time.</h2>
+      <p class="large-copy">Each future marker can open a concise course record with a verified name, location, route information, photographs, field notes, and links to related oral histories or archive materials.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .course-next-step { text-align: center; }
+</style>
