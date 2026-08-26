@@ -43,5 +43,16 @@ export const courses: CourseMapRecord[] = [
     distance: 'Approximately 2.98 miles',
     status: 'Submitted GPX route',
     note: 'Route geometry records the submitted GPX track. Historical course alignment verification is ongoing.'
+  },
+  {
+    slug: 'lums-pond-xc-course',
+    name: 'Lums Pond XC Course',
+    mapLabel: 'Lums Pond',
+    location: 'Lums Pond, Delaware',
+    marker: [39.56552, -75.709471],
+    routeUrl: '/data/courses/lums-pond-xc-course.geojson',
+    distance: 'Approximately 3.28 miles',
+    status: 'Submitted GPX route',
+    note: 'Route geometry records the submitted Apple Health GPX track. Historical course alignment verification is ongoing.'
   }
 ];
