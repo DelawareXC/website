@@ -99,9 +99,9 @@ const courseMapData = JSON.stringify(courses);
     const endpointLayer = window.L.layerGroup();
     const endpointMinimumZoom = 12;
 
-    topographic.addTo(map);
+    street.addTo(map);
     window.L.control.layers(
-      { 'Topographic': topographic, 'Street': street },
+      { 'Street': street, 'Topographic': topographic },
       { 'Course routes': courseLayer },
       { position: 'topright', collapsed: window.innerWidth < 700 }
     ).addTo(map);
