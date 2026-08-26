@@ -34,7 +34,7 @@ const courseMapData = JSON.stringify(courses);
       <p><strong>Map controls:</strong> drag to move, use the plus and minus buttons to zoom, and select a street or topographic base map.</p>
       <p class="map-legend">
         <span class="legend-endpoint legend-start" aria-hidden="true">S</span> Starting Point
-        <span class="legend-endpoint legend-finish" aria-hidden="true">F</span> Finish Point
+        <span class="legend-endpoint legend-finish" aria-hidden="true"></span> Finish Point
       </p>
       <p id="map-load-status" role="status">Loading the interactive Delaware map and course routes…</p>
     </div>
@@ -94,12 +94,13 @@ const courseMapData = JSON.stringify(courses);
     );
 
     const courseLayer = window.L.layerGroup().addTo(map);
-    const endpointLayer = window.L.layerGroup().addTo(map);
+    const endpointLayer = window.L.layerGroup();
+    const endpointMinimumZoom = 12;
 
     topographic.addTo(map);
     window.L.control.layers(
       { 'Topographic': topographic, 'Street': street },
-      { 'Course routes': courseLayer, 'Start & finish': endpointLayer },
+      { 'Course routes': courseLayer },
       { position: 'topright', collapsed: window.innerWidth < 700 }
     ).addTo(map);
     window.L.control.scale({ imperial: true, metric: false }).addTo(map);
@@ -187,10 +188,10 @@ const courseMapData = JSON.stringify(courses);
 
             const finishIcon = window.L.divIcon({
               className: 'course-endpoint-icon course-finish-icon',
-              html: '<span aria-hidden="true">F</span>',
-              iconSize: [22, 22],
-              iconAnchor: [11, 11],
-              popupAnchor: [0, -11]
+              html: '<span aria-hidden="true"></span>',
+              iconSize: [16, 16],
+              iconAnchor: [8, 8],
+              popupAnchor: [0, -8]
             });
 
             const makeEndpointPopup = (title) => {
@@ -223,7 +224,7 @@ const courseMapData = JSON.stringify(courses);
               zIndexOffset: 1100
             })
               .bindPopup(makeEndpointPopup('Finish Point'))
-              .bindTooltip('Finish Point', { direction: 'top', offset: [0, -11] })
+              .bindTooltip('Finish Point', { direction: 'top', offset: [0, -8] })
               .addTo(endpointLayer);
           }
 
@@ -239,10 +240,20 @@ const courseMapData = JSON.stringify(courses);
         });
     });
 
+    const updateEndpointVisibility = () => {
+      if (map.getZoom() >= endpointMinimumZoom) {
+        if (!map.hasLayer(endpointLayer)) endpointLayer.addTo(map);
+      } else if (map.hasLayer(endpointLayer)) {
+        map.removeLayer(endpointLayer);
+      }
+    };
+
     const resetView = () => map.fitBounds(delawareBounds, { padding: [24, 24] });
     resetView();
 
     resetButton?.addEventListener('click', resetView);
+    map.on('zoomend', updateEndpointVisibility);
+    updateEndpointVisibility();
     window.addEventListener('resize', () => map.invalidateSize());
 
     if (status && courseData.length === 0) status.textContent = 'Interactive Delaware map ready. No course routes are currently published.';
