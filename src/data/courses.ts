@@ -14,7 +14,7 @@ export const courses: CourseMapRecord[] = [
   {
     slug: 'killens-pond-state-park-course',
     name: 'Killens Pond State Park Course',
-    mapLabel: 'Killens Pond',
+    mapLabel: 'Killens Pond State Park',
     location: 'Killens Pond State Park, Delaware',
     marker: [38.981837, -75.542132],
     routeUrl: '/data/courses/killens-pond-state-park-course.geojson',
