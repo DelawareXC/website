@@ -54,5 +54,16 @@ export const courses: CourseMapRecord[] = [
     distance: 'Approximately 3.28 miles',
     status: 'Submitted GPX route',
     note: 'Route geometry records the submitted Apple Health GPX track. Historical course alignment verification is ongoing.'
+  },
+  {
+    slug: 'brandywine-creek-state-park-course',
+    name: 'Brandywine Creek State Park Course',
+    mapLabel: 'Brandywine Creek State Park',
+    location: 'Brandywine Creek State Park, Delaware',
+    marker: [39.8048955, -75.579533],
+    routeUrl: '/data/courses/brandywine-creek-state-park-course.geojson',
+    distance: 'Approximately 3.14 miles',
+    status: 'Submitted GPX route',
+    note: 'Route geometry records the submitted GPX track. Historical course alignment verification is ongoing.'
   }
 ];
