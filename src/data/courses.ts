@@ -1,6 +1,7 @@
 export interface CourseMapRecord {
   slug: string;
   name: string;
+  mapLabel: string;
   location: string;
   marker: [number, number];
   routeUrl: string;
@@ -13,6 +14,7 @@ export const courses: CourseMapRecord[] = [
   {
     slug: 'killens-pond-state-park-course',
     name: 'Killens Pond State Park Course',
+    mapLabel: 'Killens Pond',
     location: 'Killens Pond State Park, Delaware',
     marker: [38.981837, -75.542132],
     routeUrl: '/data/courses/killens-pond-state-park-course.geojson',
@@ -23,6 +25,7 @@ export const courses: CourseMapRecord[] = [
   {
     slug: 'sandhill-fields-xc-course',
     name: 'Sandhill Fields XC Course',
+    mapLabel: 'Sandhill Fields',
     location: 'Sandhill Fields, Delaware',
     marker: [38.7029485, -75.372627],
     routeUrl: '/data/courses/sandhill-fields-xc-course.geojson',

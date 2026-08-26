@@ -146,7 +146,13 @@ const courseMapData = JSON.stringify(courses);
 
       popup.append(label, name, location, distance, note, viewRoute);
       marker.bindPopup(popup, { maxWidth: 310 });
-      marker.bindTooltip(course.name, { direction: 'top', offset: [0, -8] });
+      marker.bindTooltip(course.mapLabel || course.name, {
+        permanent: true,
+        direction: 'right',
+        offset: [12, 0],
+        opacity: 1,
+        className: 'course-name-label'
+      });
 
       fetch(course.routeUrl)
         .then((response) => {
@@ -314,6 +320,8 @@ const courseMapData = JSON.stringify(courses);
   :global(.course-endpoint-icon > span) { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 0; margin: 0; line-height: 1; text-align: center; }
   :global(.course-start-icon) { background: #2f7d4a; }
   :global(.course-finish-icon) { background: #b33c2f; }
+  :global(.courses-map .course-name-label) { padding: 0; border: 0; background: transparent; box-shadow: none; color: #3388ff; font: 700 .94rem/1.1 var(--sans); letter-spacing: .01em; pointer-events: none; text-shadow: -1px -1px 0 rgba(255, 255, 255, .96), 1px -1px 0 rgba(255, 255, 255, .96), -1px 1px 0 rgba(255, 255, 255, .96), 1px 1px 0 rgba(255, 255, 255, .96), 0 0 4px rgba(255, 255, 255, .95); white-space: nowrap; }
+  :global(.courses-map .course-name-label::before) { display: none; }
   :global(.course-endpoint-popup) { min-width: 150px; color: var(--ink); font-family: var(--sans); }
   :global(.course-endpoint-popup strong) { display: block; color: var(--forest); font: 500 1rem/1.2 var(--serif); }
   :global(.course-endpoint-popup span) { display: block; margin-top: .3rem; color: var(--muted); font-size: .7rem; }
