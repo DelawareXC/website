@@ -46,9 +46,9 @@ export const courses: CourseMapRecord[] = [
   },
   {
     slug: 'lums-pond-xc-course',
-    name: 'Lums Pond XC Course',
-    mapLabel: 'Lums Pond',
-    location: 'Lums Pond, Delaware',
+    name: 'Lums Pond State Park Course',
+    mapLabel: 'Lums Pond State Park',
+    location: 'Lums Pond State Park, Delaware',
     marker: [39.56552, -75.709471],
     routeUrl: '/data/courses/lums-pond-xc-course.geojson',
     distance: 'Approximately 3.28 miles',
