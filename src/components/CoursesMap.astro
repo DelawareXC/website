@@ -1,3 +1,9 @@
+---
+import { courses } from '../data/courses';
+
+const courseMapData = JSON.stringify(courses);
+---
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
 
 <section class="courses-map-section" aria-labelledby="courses-map-heading">
@@ -6,7 +12,7 @@
       <div>
         <p class="section-kicker light">Interactive course atlas</p>
         <h2 id="courses-map-heading">Delaware statewide view</h2>
-        <p>Explore the state now. Verified course locations and routes will be added in the next stage.</p>
+        <p>The first field-walked course is now mapped. Additional routes will be added one at a time after review.</p>
       </div>
       <button id="reset-delaware-view" class="map-reset" type="button">Reset Delaware view</button>
     </div>
@@ -17,6 +23,7 @@
         class="courses-map"
         role="region"
         aria-label="Interactive map centered on the state of Delaware"
+        data-courses={courseMapData}
       ></div>
       <noscript>
         <p class="map-fallback">JavaScript is required to use the interactive Delaware course map.</p>
@@ -25,7 +32,8 @@
 
     <div class="map-notes">
       <p><strong>Map controls:</strong> drag to move, use the plus and minus buttons to zoom, and select a street or topographic base map.</p>
-      <p id="map-load-status" role="status">Loading the interactive Delaware map…</p>
+      <p class="map-legend"><span aria-hidden="true"></span> Field-walked course; historical verification ongoing</p>
+      <p id="map-load-status" role="status">Loading the interactive Delaware map and course route…</p>
     </div>
   </div>
 </section>
@@ -45,6 +53,7 @@
     }
 
     mapElement.dataset.initialized = 'true';
+    const courseData = JSON.parse(mapElement.dataset.courses || '[]');
 
     const delawareBounds = window.L.latLngBounds(
       [38.42, -75.79],
@@ -89,13 +98,84 @@
     ).addTo(map);
     window.L.control.scale({ imperial: true, metric: false }).addTo(map);
 
+    const courseLayer = window.L.layerGroup().addTo(map);
+    let loadedRoutes = 0;
+
+    courseData.forEach((course) => {
+      let routeLayer = null;
+      const marker = window.L.circleMarker(course.marker, {
+        radius: 8,
+        color: '#f2eee4',
+        weight: 2,
+        fillColor: '#a85435',
+        fillOpacity: 1
+      }).addTo(courseLayer);
+
+      const popup = document.createElement('div');
+      popup.className = 'course-map-popup';
+
+      const label = document.createElement('p');
+      label.className = 'course-map-popup-label';
+      label.textContent = course.status;
+
+      const name = document.createElement('strong');
+      name.textContent = course.name;
+
+      const location = document.createElement('p');
+      location.textContent = course.location;
+
+      const distance = document.createElement('p');
+      distance.textContent = course.distance;
+
+      const note = document.createElement('p');
+      note.className = 'course-map-popup-note';
+      note.textContent = course.note;
+
+      const viewRoute = document.createElement('button');
+      viewRoute.type = 'button';
+      viewRoute.textContent = 'View complete route';
+      viewRoute.disabled = true;
+      viewRoute.addEventListener('click', () => {
+        if (routeLayer) map.fitBounds(routeLayer.getBounds(), { padding: [36, 36] });
+      });
+
+      popup.append(label, name, location, distance, note, viewRoute);
+      marker.bindPopup(popup, { maxWidth: 310 });
+      marker.bindTooltip(course.name, { direction: 'top', offset: [0, -8] });
+
+      fetch(course.routeUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Route request failed: ${response.status}`);
+          return response.json();
+        })
+        .then((route) => {
+          routeLayer = window.L.geoJSON(route, {
+            style: {
+              color: '#a85435',
+              weight: 4,
+              opacity: .92,
+              lineJoin: 'round',
+              lineCap: 'round'
+            }
+          }).addTo(courseLayer);
+          routeLayer.bindTooltip(course.name, { sticky: true });
+          routeLayer.on('click', () => marker.openPopup());
+          viewRoute.disabled = false;
+          loadedRoutes += 1;
+          if (status) status.textContent = `${loadedRoutes} field-walked course route ready. Select its marker or route for details.`;
+        })
+        .catch(() => {
+          if (status) status.textContent = 'The course marker is ready, but its route line could not be loaded. Please refresh the page and try again.';
+        });
+    });
+
     const resetView = () => map.fitBounds(delawareBounds, { padding: [24, 24] });
     resetView();
 
     resetButton?.addEventListener('click', resetView);
     window.addEventListener('resize', () => map.invalidateSize());
 
-    if (status) status.textContent = 'Interactive Delaware map ready. Course markers will be added after location review.';
+    if (status && courseData.length === 0) status.textContent = 'Interactive Delaware map ready. No course routes are currently published.';
   })();
 </script>
 
@@ -152,15 +232,24 @@
   }
 
   .map-notes {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
     padding-top: 1rem;
     color: #bfc9c2;
-    justify-content: space-between;
     gap: 2rem;
   }
 
   .map-notes p { max-width: 560px; margin: 0; font-size: .72rem; }
   .map-notes strong { color: var(--paper); }
+  .map-legend span { display: inline-block; width: 10px; height: 10px; margin-right: .35rem; border: 1px solid var(--paper); border-radius: 50%; background: var(--clay); }
+
+  :global(.course-map-popup) { min-width: 230px; color: var(--ink); font-family: var(--sans); }
+  :global(.course-map-popup strong) { display: block; margin-bottom: .45rem; color: var(--forest); font: 500 1.1rem/1.2 var(--serif); }
+  :global(.course-map-popup p) { margin: 0 0 .45rem; font-size: .72rem; line-height: 1.45; }
+  :global(.course-map-popup .course-map-popup-label) { color: var(--clay); font-size: .62rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+  :global(.course-map-popup .course-map-popup-note) { padding-top: .5rem; border-top: 1px solid var(--line); color: var(--muted); }
+  :global(.course-map-popup button) { width: 100%; padding: .55rem .7rem; margin-top: .4rem; border: 0; background: var(--forest); color: var(--white); cursor: pointer; font-size: .7rem; font-weight: 600; }
+  :global(.course-map-popup button:disabled) { opacity: .5; cursor: wait; }
 
   :global(.courses-map .leaflet-control-layers),
   :global(.courses-map .leaflet-bar a) {
@@ -178,7 +267,7 @@
     .courses-map-header { grid-template-columns: 1fr; gap: 1.2rem; }
     .map-reset { width: max-content; }
     .courses-map { height: 520px; }
-    .map-notes { flex-direction: column; gap: .65rem; }
+    .map-notes { grid-template-columns: 1fr; gap: .65rem; }
   }
 
   @media (max-width: 430px) {
