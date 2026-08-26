@@ -11,7 +11,7 @@ const courseMapData = JSON.stringify(courses);
     <div class="courses-map-header">
       <div>
         <p class="section-kicker light">Interactive course atlas</p>
-        <h2 id="courses-map-heading">Delaware statewide view</h2>
+        <h2 id="courses-map-heading">Delaware Courses Map</h2>
         <p>Field-walked course routes are now mapped. Additional routes will be added one at a time after review.</p>
       </div>
       <button id="reset-delaware-view" class="map-reset" type="button">Reset Delaware view</button>
@@ -59,13 +59,13 @@ const courseMapData = JSON.stringify(courses);
     const courseData = JSON.parse(mapElement.dataset.courses || '[]');
 
     const delawareBounds = window.L.latLngBounds(
-      [38.42, -75.79],
-      [39.84, -74.98]
+      [38.44, -75.80],
+      [39.84, -75.00]
     );
 
     const mapBounds = window.L.latLngBounds(
-      [38.15, -76.08],
-      [40.05, -74.68]
+      [38.28, -75.96],
+      [39.98, -74.84]
     );
 
     const map = window.L.map(mapElement, {
@@ -73,6 +73,8 @@ const courseMapData = JSON.stringify(courses);
       scrollWheelZoom: false,
       keyboard: true,
       minZoom: 7,
+      zoomSnap: .25,
+      zoomDelta: .5,
       maxBounds: mapBounds,
       maxBoundsViscosity: 1
     });
@@ -292,13 +294,15 @@ const courseMapData = JSON.stringify(courses);
 
   .courses-map-frame {
     position: relative;
+    width: min(100%, 640px);
     overflow: hidden;
     border: 1px solid #718078;
     background: #dce2d7;
     box-shadow: 0 20px 50px rgba(5, 13, 9, .28);
+    margin-inline: auto;
   }
 
-  .courses-map { width: 100%; height: clamp(480px, 62vw, 690px); }
+  .courses-map { width: 100%; height: clamp(760px, 82vw, 940px); }
 
   .map-fallback {
     position: absolute;
@@ -360,11 +364,11 @@ const courseMapData = JSON.stringify(courses);
   @media (max-width: 700px) {
     .courses-map-header { grid-template-columns: 1fr; gap: 1.2rem; }
     .map-reset { width: max-content; }
-    .courses-map { height: 520px; }
+    .courses-map { height: clamp(620px, 165vw, 760px); }
     .map-notes { grid-template-columns: 1fr; gap: .65rem; }
   }
 
   @media (max-width: 430px) {
-    .courses-map { height: 460px; }
+    .courses-map { height: 640px; }
   }
 </style>
