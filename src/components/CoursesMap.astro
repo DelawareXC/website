@@ -32,7 +32,10 @@ const courseMapData = JSON.stringify(courses);
 
     <div class="map-notes">
       <p><strong>Map controls:</strong> drag to move, use the plus and minus buttons to zoom, and select a street or topographic base map.</p>
-      <p class="map-legend"><span aria-hidden="true"></span> Field-walked course; historical verification ongoing</p>
+      <p class="map-legend">
+        <span class="legend-endpoint legend-start" aria-hidden="true">S</span> Starting Point
+        <span class="legend-endpoint legend-finish" aria-hidden="true">F</span> Finish Point
+      </p>
       <p id="map-load-status" role="status">Loading the interactive Delaware map and course route…</p>
     </div>
   </div>
@@ -90,15 +93,17 @@ const courseMapData = JSON.stringify(courses);
       }
     );
 
+    const courseLayer = window.L.layerGroup().addTo(map);
+    const endpointLayer = window.L.layerGroup().addTo(map);
+
     topographic.addTo(map);
     window.L.control.layers(
       { 'Topographic': topographic, 'Street': street },
-      null,
+      { 'Course routes': courseLayer, 'Start & finish': endpointLayer },
       { position: 'topright', collapsed: window.innerWidth < 700 }
     ).addTo(map);
     window.L.control.scale({ imperial: true, metric: false }).addTo(map);
 
-    const courseLayer = window.L.layerGroup().addTo(map);
     let loadedRoutes = 0;
 
     courseData.forEach((course) => {
@@ -160,6 +165,62 @@ const courseMapData = JSON.stringify(courses);
           }).addTo(courseLayer);
           routeLayer.bindTooltip(course.name, { sticky: true });
           routeLayer.on('click', () => marker.openPopup());
+
+          const coordinates = route?.geometry?.coordinates;
+          if (Array.isArray(coordinates) && coordinates.length > 1) {
+            const start = coordinates[0];
+            const finish = coordinates[coordinates.length - 1];
+
+            const startIcon = window.L.divIcon({
+              className: 'course-endpoint-icon course-start-icon',
+              html: '<span aria-hidden="true">S</span>',
+              iconSize: [30, 30],
+              iconAnchor: [15, 15],
+              popupAnchor: [0, -14]
+            });
+
+            const finishIcon = window.L.divIcon({
+              className: 'course-endpoint-icon course-finish-icon',
+              html: '<span aria-hidden="true">F</span>',
+              iconSize: [30, 30],
+              iconAnchor: [15, 15],
+              popupAnchor: [0, -14]
+            });
+
+            const makeEndpointPopup = (title) => {
+              const content = document.createElement('div');
+              content.className = 'course-endpoint-popup';
+              const heading = document.createElement('strong');
+              heading.textContent = title;
+              const courseName = document.createElement('span');
+              courseName.textContent = course.name;
+              content.append(heading, courseName);
+              return content;
+            };
+
+            window.L.marker([start[1], start[0]], {
+              icon: startIcon,
+              title: `Starting Point — ${course.name}`,
+              alt: `Starting Point for ${course.name}`,
+              keyboard: true,
+              zIndexOffset: 1000
+            })
+              .bindPopup(makeEndpointPopup('Starting Point'))
+              .bindTooltip('Starting Point', { direction: 'top', offset: [0, -14] })
+              .addTo(endpointLayer);
+
+            window.L.marker([finish[1], finish[0]], {
+              icon: finishIcon,
+              title: `Finish Point — ${course.name}`,
+              alt: `Finish Point for ${course.name}`,
+              keyboard: true,
+              zIndexOffset: 1100
+            })
+              .bindPopup(makeEndpointPopup('Finish Point'))
+              .bindTooltip('Finish Point', { direction: 'top', offset: [0, -14] })
+              .addTo(endpointLayer);
+          }
+
           viewRoute.disabled = false;
           loadedRoutes += 1;
           if (status) status.textContent = `${loadedRoutes} field-walked course route ready. Select its marker or route for details.`;
@@ -241,7 +302,17 @@ const courseMapData = JSON.stringify(courses);
 
   .map-notes p { max-width: 560px; margin: 0; font-size: .72rem; }
   .map-notes strong { color: var(--paper); }
-  .map-legend span { display: inline-block; width: 10px; height: 10px; margin-right: .35rem; border: 1px solid var(--paper); border-radius: 50%; background: var(--clay); }
+  .legend-endpoint { display: inline-grid; width: 20px; height: 20px; margin: 0 .3rem 0 .55rem; border: 2px solid var(--white); border-radius: 50%; color: var(--white); font-size: .62rem; font-weight: 700; line-height: 1; vertical-align: middle; place-items: center; }
+  .legend-endpoint:first-child { margin-left: 0; }
+  .legend-start { background: #2f7d4a; }
+  .legend-finish { background: #b33c2f; }
+
+  :global(.course-endpoint-icon) { display: grid; border: 2px solid var(--white); border-radius: 50%; color: var(--white); box-shadow: 0 2px 8px rgba(12, 25, 17, .42); font: 700 .76rem/1 var(--sans); place-items: center; }
+  :global(.course-start-icon) { background: #2f7d4a; }
+  :global(.course-finish-icon) { background: #b33c2f; }
+  :global(.course-endpoint-popup) { min-width: 150px; color: var(--ink); font-family: var(--sans); }
+  :global(.course-endpoint-popup strong) { display: block; color: var(--forest); font: 500 1rem/1.2 var(--serif); }
+  :global(.course-endpoint-popup span) { display: block; margin-top: .3rem; color: var(--muted); font-size: .7rem; }
 
   :global(.course-map-popup) { min-width: 230px; color: var(--ink); font-family: var(--sans); }
   :global(.course-map-popup strong) { display: block; margin-bottom: .45rem; color: var(--forest); font: 500 1.1rem/1.2 var(--serif); }
