@@ -43,6 +43,21 @@ const features = [
     </div>
   </section>
 
+  <section class="land-statement" aria-labelledby="land-statement-heading">
+    <div class="container land-statement-grid">
+      <div class="land-statement-heading">
+        <p class="section-kicker">Courses and landscape</p>
+        <h2 id="land-statement-heading">The land is part of the archive.</h2>
+        <a class="text-link" href="/courses/">Explore the course map <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="land-statement-copy">
+        <p class="large-copy">Before a cross country course becomes a line on a map, it is a path known by foot. We return to that most fundamental way of knowing a course—walking it from beginning to end, step by step—to measure, document, and preserve a faithful record of each 5-kilometer (3.1-mile) route.</p>
+        <p>Thousands of runners have passed over these fields, hills, woods, and trails. They left behind no permanent mark, yet each carried away a memory: the strain of a climb, the uncertainty of a turn, the sound of teammates nearby, or the final approach to the finish. New runners continue to enter these landscapes every day—some following only a short stretch, others completing the entire course.</p>
+        <p>A course is more than a route through the land. It is a record written in footsteps. By walking these paths again and documenting them carefully, we hope to preserve not only where Delaware cross country was run, but something of the human experience that gave each course meaning.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="section paper-section" aria-labelledby="explore-heading">
     <div class="container">
       <div class="section-heading">
@@ -118,3 +133,62 @@ const features = [
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .land-statement {
+    position: relative;
+    padding: clamp(5.5rem, 10vw, 9rem) 0;
+    overflow: hidden;
+    border-block: 1px solid #d0c5b1;
+    background: #e9e1d1;
+  }
+
+  .land-statement::after {
+    position: absolute;
+    right: -12rem;
+    bottom: -18rem;
+    width: 42rem;
+    height: 42rem;
+    border: 1px solid rgba(35, 56, 46, .13);
+    border-radius: 48% 52% 58% 42%;
+    box-shadow:
+      0 0 0 3rem rgba(35, 56, 46, .025),
+      0 0 0 6rem rgba(35, 56, 46, .025),
+      0 0 0 9rem rgba(35, 56, 46, .025);
+    content: '';
+    transform: rotate(-14deg);
+  }
+
+  .land-statement-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(260px, .85fr) minmax(0, 1.65fr);
+    align-items: start;
+    gap: clamp(3.5rem, 9vw, 9rem);
+  }
+
+  .land-statement-heading {
+    position: sticky;
+    top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 2px solid var(--clay);
+  }
+
+  .land-statement-heading h2 {
+    color: var(--forest);
+    font-size: clamp(2.8rem, 5vw, 5.2rem);
+  }
+
+  .land-statement-heading .text-link { display: inline-block; margin-top: 1rem; }
+
+  .land-statement-copy { max-width: 760px; }
+  .land-statement-copy p { color: #414a43; }
+  .land-statement-copy .large-copy { color: var(--forest); }
+  .land-statement-copy p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 700px) {
+    .land-statement-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .land-statement-heading { position: static; }
+  }
+</style>
