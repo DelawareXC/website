@@ -32,5 +32,16 @@ export const courses: CourseMapRecord[] = [
     distance: 'Approximately 3.13 miles',
     status: 'Submitted GPX route',
     note: 'Route geometry records the submitted GPX track. Historical course alignment verification is ongoing.'
+  },
+  {
+    slug: 'delaware-state-university-xc-course',
+    name: 'Delaware State University XC Course',
+    mapLabel: 'Delaware State University',
+    location: 'Delaware State University, Delaware',
+    marker: [39.2847395, -75.585303],
+    routeUrl: '/data/courses/delaware-state-university-xc-course.geojson',
+    distance: 'Approximately 2.98 miles',
+    status: 'Submitted GPX route',
+    note: 'Route geometry records the submitted GPX track. Historical course alignment verification is ongoing.'
   }
 ];
