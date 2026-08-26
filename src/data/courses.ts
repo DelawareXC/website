@@ -19,5 +19,15 @@ export const courses: CourseMapRecord[] = [
     distance: 'Approximately 3.2 miles',
     status: 'Field-walked route',
     note: 'Route geometry records the submitted field walk. Historical course alignment verification is ongoing.'
+  },
+  {
+    slug: 'sandhill-fields-xc-course',
+    name: 'Sandhill Fields XC Course',
+    location: 'Sandhill Fields, Delaware',
+    marker: [38.7029485, -75.372627],
+    routeUrl: '/data/courses/sandhill-fields-xc-course.geojson',
+    distance: 'Approximately 3.13 miles',
+    status: 'Submitted GPX route',
+    note: 'Route geometry records the submitted GPX track. Historical course alignment verification is ongoing.'
   }
 ];

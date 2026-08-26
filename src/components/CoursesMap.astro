@@ -12,7 +12,7 @@ const courseMapData = JSON.stringify(courses);
       <div>
         <p class="section-kicker light">Interactive course atlas</p>
         <h2 id="courses-map-heading">Delaware statewide view</h2>
-        <p>The first field-walked course is now mapped. Additional routes will be added one at a time after review.</p>
+        <p>Field-walked course routes are now mapped. Additional routes will be added one at a time after review.</p>
       </div>
       <button id="reset-delaware-view" class="map-reset" type="button">Reset Delaware view</button>
     </div>
@@ -36,7 +36,7 @@ const courseMapData = JSON.stringify(courses);
         <span class="legend-endpoint legend-start" aria-hidden="true">S</span> Starting Point
         <span class="legend-endpoint legend-finish" aria-hidden="true">F</span> Finish Point
       </p>
-      <p id="map-load-status" role="status">Loading the interactive Delaware map and course route…</p>
+      <p id="map-load-status" role="status">Loading the interactive Delaware map and course routes…</p>
     </div>
   </div>
 </section>
@@ -112,7 +112,7 @@ const courseMapData = JSON.stringify(courses);
         radius: 8,
         color: '#f2eee4',
         weight: 2,
-        fillColor: '#a85435',
+        fillColor: '#3388ff',
         fillOpacity: 1
       }).addTo(courseLayer);
 
@@ -223,7 +223,10 @@ const courseMapData = JSON.stringify(courses);
 
           viewRoute.disabled = false;
           loadedRoutes += 1;
-          if (status) status.textContent = `${loadedRoutes} field-walked course route ready. Select its marker or route for details.`;
+          if (status) {
+            const routeLabel = loadedRoutes === 1 ? 'course route' : 'course routes';
+            status.textContent = `${loadedRoutes} field-walked ${routeLabel} ready. Select a marker or route for details.`;
+          }
         })
         .catch(() => {
           if (status) status.textContent = 'The course marker is ready, but its route line could not be loaded. Please refresh the page and try again.';
