@@ -36,18 +36,16 @@ button, input, select { font: inherit; }
 .skip-link:focus { transform: translateY(0); }
 .utility-bar { padding: .38rem 3rem; background: var(--forest-dark); color: #e7e7df; font-size: .7rem; letter-spacing: .12em; text-align: right; text-transform: uppercase; }
 .site-header { background: var(--cream); border-bottom: 1px solid var(--line); }
-.nav-wrap { display: flex; width: min(1320px, calc(100% - 3rem)); min-height: 118px; margin: auto; align-items: center; justify-content: space-between; gap: 3rem; }
+.nav-wrap { display: flex; width: min(1320px, calc(100% - 3rem)); min-height: 94px; margin: auto; align-items: center; justify-content: space-between; gap: 2.5rem; }
 .wordmark { display: flex; align-items: center; gap: .85rem; font-family: var(--serif); font-size: .85rem; line-height: 1.25; text-decoration: none; }
 .wordmark strong { font-size: 1.12rem; }
 .wordmark-mark { display: grid; width: 46px; height: 46px; border-radius: 50%; background: var(--forest); color: var(--paper); place-items: center; font: 600 .7rem/1 var(--sans); letter-spacing: .08em; }
 .site-header nav ul { display: flex; margin: 0; padding: 0; align-items: center; list-style: none; }
 .site-header nav a { padding: .55rem 0; color: #3f4740; font-size: .83rem; font-weight: 600; text-decoration: none; }
 .site-header nav a:hover, .site-header nav a[aria-current='page'] { color: var(--clay); border-bottom: 2px solid var(--clay); }
-.desktop-nav { display: grid; justify-items: end; gap: .65rem; }
-.desktop-nav .nav-primary { gap: 1.75rem; }
-.desktop-nav .nav-primary a { font-family: var(--serif); font-size: 1rem; font-weight: 500; }
-.desktop-nav .nav-sections { padding-top: .6rem; border-top: 1px solid var(--line); gap: clamp(.8rem, 1.6vw, 1.5rem); }
-.desktop-nav .nav-sections a { color: var(--muted); font-size: .7rem; letter-spacing: .045em; }
+.desktop-nav { display: block; }
+.desktop-nav .nav-links { gap: clamp(1rem, 2vw, 2rem); }
+.desktop-nav .nav-links a { color: var(--muted); font-size: .78rem; letter-spacing: .025em; }
 .mobile-nav { display: none; }
 .hero { position: relative; display: grid; min-height: 720px; overflow: hidden; background: var(--forest-dark); color: var(--white); align-items: center; }
 .hero-image, .hero-scrim { position: absolute; inset: 0; }
